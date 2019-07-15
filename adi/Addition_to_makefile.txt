@@ -1,0 +1,17 @@
+#Makefile Addition -------------------------------------------------
+#subdir-ccflags-y += -I$(src)
+
+ofed-ccflags := -I$(srctree)/mofed/include \
+                -I$(srctree)/mofed/include/rdma \
+                -I$(srctree)/mofed/include/uapi \
+                -I$(srctree)/mofed/include/uapi/rdma \
+                -include $(srctree)/mofed/include/linux/compat-2.6.h
+
+ccflags-y += \
+             -DCOMPAT_BASE="\"$(shell cat $(srctree)/mofed/compat_base)\"" \
+             -DCOMPAT_BASE_TREE="\"$(shell cat $(srctree)/mofed/compat_base_tree)\"" \
+             -DCOMPAT_BASE_TREE_VERSION="\"$(shell cat $(srctree)/mofed/compat_base_tree_version)\"" \
+             -DCOMPAT_PROJECT="\"Compat-mlnx-ofed\"" \
+             -DCOMPAT_VERSION="\"$(shell cat $(srctree)/mofed/compat_version)\"" \
+#-------------------------------------------------------------------
+

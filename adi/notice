@@ -1,0 +1,5 @@
+imply
+-----
+drivers/net/ethernet/mellanox/mlx5/core/Kconfig:9: unknown option "imply"
+
+=> notice : the imply option in the config file appears from 4.10
