@@ -9,9 +9,10 @@ echo $PRETTY_NAME
 
 # config
 REPO="file:///.autodirect/mtrsysgwork/roid/gerrit2/iproute2"
-[ -z "$BRANCH" ] && BRANCH=${1:-asap2-direct-3.3-next}
+REPO="file:////images/chrism/iproute2"
+[ -z "$BRANCH" ] && BRANCH=ct-one-table
 TMPDIR=/tmp/tmp$$-iproute
-DEBIAN=~roid/scripts/ovs/iproute2-ubuntu.debian.tar.gz
+DEBIAN=~chrism/bin/iproute2-ubuntu.debian.tar.gz
 
 # run
 set -e
@@ -23,11 +24,11 @@ rm -fr $TMPDIR
 mkdir -p $TMPDIR
 cd $TMPDIR
 
-apt-get install -y fakeroot pkg-config libmnl0 libmnl-dev iptables iptables-dev \
-            libelf1 libelf-dev libdb-dev \
-            linuxdoc-tools psutils flex bison dvipsk-ja \
-            libselinux1-dev libatm1-dev \
-            texlive-latex-recommended  texlive-latex-extra
+# apt-get install -y fakeroot pkg-config libmnl0 libmnl-dev iptables iptables-dev \
+#             libelf1 libelf-dev libdb-dev \
+#             linuxdoc-tools psutils flex bison dvipsk-ja \
+#             libselinux1-dev libatm1-dev \
+#             texlive-latex-recommended  texlive-latex-extra
 
 # clone and prep
 CLONEDIR="iproute-$BRANCH"

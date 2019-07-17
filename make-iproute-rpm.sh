@@ -13,10 +13,10 @@ if [ ! -e /usr/bin/rpmbuild ]; then
 fi
 
 # config
-#[ -z "$REPO" ] && REPO="file:///.autodirect/mtrsysgwork/roid/gerrit2/iproute2"
-[ -z "$REPO" ] && REPO="git://git.kernel.org/pub/scm/network/iproute2/iproute2-next.git"
-[ -z "$BRANCH" ] && BRANCH=${1:-master}
-SPEC=~roid/scripts/ovs/iproute.spec
+[ -z "$REPO" ] && REPO=/images/chrism/iproute2
+# [ -z "$REPO" ] && REPO="git://git.kernel.org/pub/scm/network/iproute2/iproute2-next.git"
+[ -z "$BRANCH" ] && BRANCH=ct-one-table
+SPEC=~chrism/bin/iproute.spec
 TMPDIR=/tmp/tmp$$-iproute
 
 # run
@@ -43,7 +43,8 @@ sudo $DNF install -y libmnl libmnl-devel iptables iptables-devel elfutils-devel 
 
 # clone and prep
 CLONEDIR="iproute-$BRANCH"
-git clone --depth=100 --branch=$BRANCH --single-branch $REPO $CLONEDIR
+# git clone --depth=100 --branch=$BRANCH --single-branch $REPO $CLONEDIR
+git clone --branch=$BRANCH --single-branch $REPO $CLONEDIR
 cd $CLONEDIR
 git fetch -q --tags
 cp $SPEC .
