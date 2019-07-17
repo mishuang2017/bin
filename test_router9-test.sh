@@ -18,6 +18,7 @@ VM_NAT_IP_HEX=0x6440000a
 VM_ROUTE=192.168.0.1
 VM_ROUTE_HEX=0xc0a80001
 
+PATCH_EX=patch-ex
 PATCH_INT=patch-int
 REP=enp4s0f0_1
 
@@ -55,14 +56,15 @@ set -x
 	ifconfig $BR_INT up
 
 	ovs-vsctl add-port $BR_INT $REP
+	ovs-vsctl add-port $BR_INT enp4s0f0_0
 	ovs-vsctl add-port $BR_EX  $PF
 
 	ifconfig $BR_EX 8.9.10.1/24 up
 
 	ovs-vsctl                           \
 		-- add-port $BR_INT $PATCH_INT       \
-		-- set interface patch-int type=patch options:peer=patch-ex  \
-		-- add-port $BR_EX patch-ex       \
+		-- set interface patch-int type=patch options:peer=$PATCH_EX  \
+		-- add-port $BR_EX $PATCH_EX       \
 		-- set interface patch-ex type=patch options:peer=$PATCH_INT
 set +x
 }
@@ -78,7 +80,7 @@ ip netns exec n11 ip route add default via $VM_ROUTE dev $VF
 # arp responder
 
 ovs-ofctl add-flow $BR_INT "table=0, in_port=$REP, dl_type=0x0806, nw_dst=$VM_ROUTE, actions=load:0x2->NXM_OF_ARP_OP[], move:NXM_OF_ETH_SRC[]->NXM_OF_ETH_DST[], mod_dl_src=${MAC_ROUTE}, move:NXM_NX_ARP_SHA[]->NXM_NX_ARP_THA[], move:NXM_OF_ARP_SPA[]->NXM_OF_ARP_TPA[], load:$MAC_ROUTE_HEX->NXM_NX_ARP_SHA[], load:$VM_ROUTE_HEX->NXM_OF_ARP_SPA[], in_port"
-# lvs-ofctl add-flow $BR_INT "table=0, in_port=$PATCH_INT, dl_type=0x0806, nw_dst=8.9.10.1, actions=load:0x2->NXM_OF_ARP_OP[], move:NXM_OF_ETH_SRC[]->NXM_OF_ETH_DST[], mod_dl_src:${MAC_ROUTE}, move:NXM_NX_ARP_SHA[]->NXM_NX_ARP_THA[], move:NXM_OF_ARP_SPA[]->NXM_OF_ARP_TPA[], load:$MAC_ROUTE_HEX->NXM_NX_ARP_SHA[], load:0x08090a01->NXM_OF_ARP_SPA[], in_port"
+# ovs-ofctl add-flow $BR_INT "table=0, in_port=$PATCH_INT, dl_type=0x0806, nw_dst=8.9.10.1, actions=load:0x2->NXM_OF_ARP_OP[], move:NXM_OF_ETH_SRC[]->NXM_OF_ETH_DST[], mod_dl_src:${MAC_ROUTE}, move:NXM_NX_ARP_SHA[]->NXM_NX_ARP_THA[], move:NXM_OF_ARP_SPA[]->NXM_OF_ARP_TPA[], load:$MAC_ROUTE_HEX->NXM_NX_ARP_SHA[], load:0x08090a01->NXM_OF_ARP_SPA[], in_port"
 
 # request
 ovs-ofctl add-flow $BR_INT "table=0,priority=100,in_port=$REP actions=load:0x6757->NXM_NX_REG6[],load:0x7->OXM_OF_METADATA[],load:0->OXM_OF_IN_PORT[],resubmit(,5)"
@@ -99,11 +101,17 @@ ovs-ofctl add-flow $BR_INT "table=71,priority=50,ip actions=mod_dl_src:$MAC_ROUT
 ovs-ofctl add-flow $BR_INT "table=0,priority=20,in_port=$PATCH_INT actions=load:0->OXM_OF_IN_PORT[],resubmit(,50)"
 ovs-ofctl add-flow $BR_INT "table=50,priority=50,ip actions=ct(table=51,zone=65534,nat)"
 ovs-ofctl add-flow $BR_INT "table=51,priority=50,ct_mark=0x6757,ip actions=mod_dl_src:$MAC_ROUTE,mod_dl_dst:$MAC_VF,load:0x6757->NXM_NX_REG7[],move:NXM_NX_CT_LABEL[0..31]->NXM_OF_IP_DST[],load:0x7->OXM_OF_METADATA[],resubmit(,100)"
+# ovs-ofctl add-flow $BR_INT "table=51,priority=50,ip actions=NORMAL"
 ovs-ofctl add-flow $BR_INT "table=100,priority=200,metadata=0x7,dl_dst=$MAC_VF actions=load:0x6757->NXM_NX_REG7[],resubmit(,105)"
 ovs-ofctl add-flow $BR_INT "table=105,priority=100,ip,reg7=0x6757 actions=ct(table=110,zone=OXM_OF_METADATA[0..15])"
 ovs-ofctl add-flow $BR_INT "table=110,priority=22,ct_state=+new-est-rel-rpl-inv+trk,ip actions=ct(commit,table=115,zone=NXM_NX_CT_ZONE[])"
 ovs-ofctl add-flow $BR_INT "table=110,priority=22,ct_state=-new+est-rel+rpl-inv+trk,ip actions=resubmit(,115)"
 ovs-ofctl add-flow $BR_INT "table=110,priority=22,ct_state=-new+est-rel-rpl-inv+trk,ip actions=resubmit(,115)"
 ovs-ofctl add-flow $BR_INT "table=115,priority=100,reg7=0x6757 actions=output:$REP"
+
+# We need to differentiate the NAT packet and the management packet
+ovs-ofctl add-flow $BR_EX "table=0,in_port=$PF,ip,dl_src=24:8a:07:88:27:9a,dl_dst=24:8a:07:88:27:ca actions=ct(table=1,zone=65534,nat)"
+ovs-ofctl add-flow $BR_EX "table=1,ct_mark=0 actions=output:$BR_EX"
+ovs-ofctl add-flow $BR_EX "table=1,ct_mark=0x6757 actions=output:$PATCH_EX"
 
 set +x
