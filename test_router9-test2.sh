@@ -23,25 +23,18 @@ PATCH_INT=patch-int
 REP=enp4s0f0_1
 
 if [[ $(hostname -s) == "dev-r630-03" ]]; then
-	MAC_PF=24:8a:07:88:27:ca
+	MAC_REMOTE_PF=24:8a:07:88:27:ca
 	REMOTE_HOST=10.12.205.14
 elif [[ $(hostname -s) == "dev-r630-04" ]]; then
-	MAC_PF=24:8a:07:88:27:9a
+	MAC_REMOTE_PF=24:8a:07:88:27:9a
 	REMOTE_HOST=10.12.205.13
 fi
 REMOTE_PF_IP=8.9.10.11
 ifconfig $PF 0
 ssh $REMOTE_HOST ifconfig $REMOTE_PF $REMOTE_PF_IP/24 up
 
-MAC_LOCAL_PF=$(cat /sys/class/net/$PF/address)
-
-MAC_ROUTE=$MAC_LOCAL_PF
-MAC_ROUTE_HEX=$(echo $MAC_ROUTE | sed 's/://g' | sed 's/^/0x/')
-
 MAC_ROUTE="24:8a:07:ad:77:99"
 MAC_ROUTE_HEX=$(echo $MAC_ROUTE | sed 's/://g' | sed 's/^/0x/')
-
-MAC_BR_EX=$(cat /sys/class/net/$BR_EX/address)
 
 set +x
 
@@ -77,17 +70,15 @@ create-br
 
 set -x
 
+MAC_BR_EX=$(cat /sys/class/net/$BR_EX/address)
+
 ip netns exec n11 ifconfig $VF $VM_IP/24 up
 ip netns exec n11 ip route delete default
 ip netns exec n11 ip route add default via $VM_ROUTE dev $VF
 
 # arp responder
-
 ovs-ofctl add-flow $BR_INT "table=0, in_port=$REP, dl_type=0x0806, nw_dst=$VM_ROUTE, actions=load:0x2->NXM_OF_ARP_OP[], move:NXM_OF_ETH_SRC[]->NXM_OF_ETH_DST[], mod_dl_src=${MAC_ROUTE}, move:NXM_NX_ARP_SHA[]->NXM_NX_ARP_THA[], move:NXM_OF_ARP_SPA[]->NXM_OF_ARP_TPA[], load:$MAC_ROUTE_HEX->NXM_NX_ARP_SHA[], load:$VM_ROUTE_HEX->NXM_OF_ARP_SPA[], in_port"
-
 ovs-ofctl add-flow $BR_INT "table=0, in_port=$PATCH_INT, dl_type=0x0806, nw_dst=8.9.10.10, actions=load:0x2->NXM_OF_ARP_OP[], move:NXM_OF_ETH_SRC[]->NXM_OF_ETH_DST[], mod_dl_src:${MAC_ROUTE}, move:NXM_NX_ARP_SHA[]->NXM_NX_ARP_THA[], move:NXM_OF_ARP_SPA[]->NXM_OF_ARP_TPA[], load:$MAC_ROUTE_HEX->NXM_NX_ARP_SHA[], load:0x08090a0a->NXM_OF_ARP_SPA[], in_port"
-
-# ovs-ofctl add-flow $BR_INT "table=0, in_port=$PF, dl_type=0x0806, nw_dst=8.9.10.10, actions=load:0x2->NXM_OF_ARP_OP[], move:NXM_OF_ETH_SRC[]->NXM_OF_ETH_DST[], mod_dl_src:${MAC_ROUTE}, move:NXM_NX_ARP_SHA[]->NXM_NX_ARP_THA[], move:NXM_OF_ARP_SPA[]->NXM_OF_ARP_TPA[], load:$MAC_ROUTE_HEX->NXM_NX_ARP_SHA[], load:0x08090a0a->NXM_OF_ARP_SPA[], in_port"
 
 # request
 ovs-ofctl add-flow $BR_INT "table=0,priority=100,in_port=$REP actions=load:0x6757->NXM_NX_REG6[],load:0x7->OXM_OF_METADATA[],load:0->OXM_OF_IN_PORT[],resubmit(,5)"
@@ -116,10 +107,10 @@ ovs-ofctl add-flow $BR_INT "table=110,priority=22,ct_state=-new+est-rel+rpl-inv+
 ovs-ofctl add-flow $BR_INT "table=110,priority=22,ct_state=-new+est-rel-rpl-inv+trk,ip actions=resubmit(,115)"
 ovs-ofctl add-flow $BR_INT "table=115,priority=100,reg7=0x6757 actions=output:$REP"
 
-ovs-ofctl add-flow $BR_EX "table=0,priority=50,ip,nw_dst=8.9.10.11,dl_dst=24:8a:07:88:27:ca actions=mod_dl_dst:24:8a:07:88:27:9a,output:$PF"
+ovs-ofctl add-flow $BR_EX "table=0,priority=50,ip,nw_dst=$REMOTE_PF_IP,dl_dst=$MAC_BR_EX actions=mod_dl_dst:$MAC_REMOTE_PF,output:$PF"
 
 # We need to differentiate the NAT packet and the management packet
-ovs-ofctl add-flow $BR_EX "table=0,in_port=$PF,ip,dl_src=24:8a:07:88:27:9a,dl_dst=24:8a:07:88:27:ca actions=ct(table=1,zone=65534,nat)"
+ovs-ofctl add-flow $BR_EX "table=0,in_port=$PF,ip,dl_src=$MAC_REMOTE_PF,dl_dst=$MAC_BR_EX actions=ct(table=1,zone=65534,nat)"
 ovs-ofctl add-flow $BR_EX "table=1,ct_mark=0 actions=output:$BR_EX"
 ovs-ofctl add-flow $BR_EX "table=1,ct_mark=0x6757 actions=output:$PATCH_EX"
 
