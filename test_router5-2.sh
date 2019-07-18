@@ -32,13 +32,15 @@ REP=enp4s0f0_1
 PF=enp4s0f0
 MAC_LOCAL_PF=$(cat /sys/class/net/$PF/address)
 
+ifconfig $PF 0
+
 # ovs-ofctl add-flow $br "table=0, in_port=$REP, dl_type=0x0806, nw_dst=192.168.0.1, actions=load:0x2->NXM_OF_ARP_OP[], move:NXM_OF_ETH_SRC[]->NXM_OF_ETH_DST[], mod_dl_src=$MAC_ROUTE, move:NXM_NX_ARP_SHA[]->NXM_NX_ARP_THA[], move:NXM_OF_ARP_SPA[]->NXM_OF_ARP_TPA[], load:0x248a07ad7799->NXM_NX_ARP_SHA[], load:0xc0a80001->NXM_OF_ARP_SPA[], in_port"
-ovs-ofctl add-flow $br "table=0, in_port=$br, priority=100, dl_type=0x0806, nw_dst=8.9.10.1, actions=load:0x2->NXM_OF_ARP_OP[], move:NXM_OF_ETH_SRC[]->NXM_OF_ETH_DST[], mod_dl_src:$MAC_ROUTE, move:NXM_NX_ARP_SHA[]->NXM_NX_ARP_THA[], move:NXM_OF_ARP_SPA[]->NXM_OF_ARP_TPA[], load:0x248a07ad7799->NXM_NX_ARP_SHA[], load:0x08090a01->NXM_OF_ARP_SPA[], in_port"
+ovs-ofctl add-flow $br "table=0, in_port=$br, priority=100, dl_type=0x0806, nw_dst=8.9.10.10, actions=load:0x2->NXM_OF_ARP_OP[], move:NXM_OF_ETH_SRC[]->NXM_OF_ETH_DST[], mod_dl_src:$MAC_ROUTE, move:NXM_NX_ARP_SHA[]->NXM_NX_ARP_THA[], move:NXM_OF_ARP_SPA[]->NXM_OF_ARP_TPA[], load:0x248a07ad7799->NXM_NX_ARP_SHA[], load:0x08090a0a->NXM_OF_ARP_SPA[], in_port"
 
 ovs-ofctl add-flow $br "table=0,priority=10,ip,ct_state=-trk,action=ct(nat,table=1)"
-ovs-ofctl add-flow $br "table=1,in_port=$REP,ip,ct_state=+trk+new,action=ct(commit,nat(src=8.9.10.1:5000-50000)),mod_dl_src:${MAC_ROUTE},mod_dl_dst:${MAC2},$PF"
+ovs-ofctl add-flow $br "table=1,in_port=$REP,ip,ct_state=+trk+new,action=ct(commit,nat(src=8.9.10.10:5000-50000)),mod_dl_src:${MAC_ROUTE},$br"
 
-ovs-ofctl add-flow $br "table=1,in_port=$REP,ct_state=+trk+est-rpl,ip,action=mod_dl_src:$MAC_ROUTE,mod_dl_dst:$MAC2,$PF"
+ovs-ofctl add-flow $br "table=1,in_port=$REP,ct_state=+trk+est-rpl,ip,action=mod_dl_src:$MAC_ROUTE,$br"
 
 ovs-ofctl add-flow $br "table=1,in_port=$PF,ct_state=+trk+est+rpl,ip,action=mod_dl_src:$MAC_ROUTE,mod_dl_dst:$MAC1,$REP"
 ovs-ofctl add-flow $br "table=1,in_port=$PF,ip,action=NORMAL"
