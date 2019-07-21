@@ -124,6 +124,12 @@ ovs-ofctl add-flow $BR_INT "table=110,priority=22,ct_state=-new+est-rel+rpl-inv+
 ovs-ofctl add-flow $BR_INT "table=110,priority=22,ct_state=-new+est-rel-rpl-inv+trk,ip actions=resubmit(,115)"
 ovs-ofctl add-flow $BR_INT "table=115,priority=100,reg7=0x6757 actions=output:$REP"
 
+# vxlan
+ovs-ofctl add-flow $BR_INT "table=0,priority=30,in_port=vxlan0,ip actions=ct(table=1)"
+ovs-ofctl add-flow $BR_INT "table=1,priority=10,ct_state=+trk+new,ip actions=ct(commit),normal"
+ovs-ofctl add-flow $BR_INT "table=1,priority=10,ct_state=+trk+est,ip actions=normal"
+ovs-ofctl add-flow $BR_INT "table=1,priority=1, actions=normal"
+
 # ovs-ofctl add-flow $BR_EX "table=0,priority=50,ip,nw_dst=$REMOTE_PF_IP,dl_dst=$MAC_BR_EX actions=mod_dl_dst:$MAC_REMOTE_PF,output:$PF"
 
 # We need to differentiate the NAT packet and the management packet
