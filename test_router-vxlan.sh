@@ -93,10 +93,6 @@ ovs-ofctl add-flow $BR_INT table=0,in_port=$PATCH_INT,icmp,nw_dst=$MAC_ROUTE_IP,
 # request
 ovs-ofctl add-flow $BR_INT "table=0,priority=100,in_port=$REP,arp actions=NORMAL"
 ovs-ofctl add-flow $BR_INT "table=0,priority=100,in_port=$REP actions=load:0x6757->NXM_NX_REG6[],load:0x7->OXM_OF_METADATA[],load:0->OXM_OF_IN_PORT[],resubmit(,5)"
-ovs-ofctl add-flow $BR_INT "table=0,priority=101,ct_state=-trk,in_port=$REP,ip,nw_dst=192.168.0.200 actions=ct(table=1)"
-ovs-ofctl add-flow $BR_INT "table=1,priority=10,ct_state=+trk+new,ip actions=ct(commit),normal"
-ovs-ofctl add-flow $BR_INT "table=1,priority=10,ct_state=+trk+est,ip actions=normal"
-ovs-ofctl add-flow $BR_INT "table=1,priority=1, actions=normal"
 ovs-ofctl add-flow $BR_INT "table=5,priority=200,ip,reg6=0x6757,dl_src=$MAC_VF,nw_src=$VM_IP actions=resubmit(,10)"
 ovs-ofctl add-flow $BR_INT "table=10,priority=100,ip,reg6=0x6757 actions=ct(table=15,zone=OXM_OF_METADATA[0..15])"
 ovs-ofctl add-flow $BR_INT "table=15,priority=22,ct_state=+new-est-rel-rpl-inv+trk,ip actions=ct(commit,table=17,zone=NXM_NX_CT_ZONE[])"
@@ -109,6 +105,13 @@ ovs-ofctl add-flow $BR_INT "table=60,priority=50,ip actions=resubmit(,61)"
 ovs-ofctl add-flow $BR_INT "table=61,priority=50,ip,reg5=0x1b actions=resubmit(,70)"
 ovs-ofctl add-flow $BR_INT "table=70,priority=50,ip actions=move:NXM_OF_IP_SRC[]->NXM_NX_REG5[],move:NXM_NX_REG6[]->NXM_OF_IP_SRC[],load:0x1->NXM_OF_IP_SRC[31],ct(commit,table=71,zone=65534,nat(src=$MAC_ROUTE_IP),exec(move:NXM_NX_REG6[]->NXM_NX_CT_MARK[],move:NXM_NX_REG5[]->NXM_NX_CT_LABEL[0..31]))"
 ovs-ofctl add-flow $BR_INT "table=71,priority=50,ip actions=mod_dl_src:$MAC_ROUTE,mod_dl_dst:$MAC_BR_EX,output:$PATCH_INT"
+
+# vxlan
+ovs-ofctl add-flow $BR_INT "table=0,priority=101,ct_state=-trk,in_port=$REP,ip,nw_dst=192.168.0.200 actions=ct(table=1)"
+ovs-ofctl add-flow $BR_INT "table=1,priority=10,ct_state=+trk+new,ip actions=ct(commit),normal"
+ovs-ofctl add-flow $BR_INT "table=1,priority=10,ct_state=+trk+est,ip actions=normal"
+ovs-ofctl add-flow $BR_INT "table=1,priority=1, actions=normal"
+
 
 # reply
 ovs-ofctl add-flow $BR_INT "table=0,priority=20,in_port=$PATCH_INT actions=load:0->OXM_OF_IN_PORT[],resubmit(,50)"
