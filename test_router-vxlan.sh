@@ -125,7 +125,7 @@ ovs-ofctl add-flow $BR_INT "table=1,priority=10,ct_state=+trk+new,ip actions=ct(
 ovs-ofctl add-flow $BR_INT "table=1,priority=10,ct_state=+trk+est,ip actions=normal"
 ovs-ofctl add-flow $BR_INT "table=1,priority=1, actions=normal"
 
-ovs-ofctl add-flow $BR_EX "table=0,priority=50,in_port=$PATCH_EX,ip,nw_dst=$REMOTE_PF_IP,dl_dst=$MAC_BR_EX actions=mod_dl_dst:$MAC_REMOTE_PF,output:$PF"
+ovs-ofctl add-flow $BR_EX "table=0,priority=50,in_port=$PATCH_EX,ip,nw_dst=$REMOTE_PF_IP,dl_dst=$MAC_BR_EX actions=mod_dl_dst:$MAC_REMOTE_PF,output:NORMAL"
 
 # We need to differentiate the NAT packet and the management packet
 # ovs-ofctl add-flow $BR_EX "table=0,in_port=$PF,ip,dl_src=$MAC_REMOTE_PF,dl_dst=$ROUTE_MAC actions=ct(table=1,zone=65534,nat)"
