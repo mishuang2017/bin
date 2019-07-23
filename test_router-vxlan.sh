@@ -51,8 +51,6 @@ set -x
 	ovs-vsctl add-br $BR_INT
 	ovs-vsctl add-br $BR_EX
 
-	ifconfig $BR_INT up
-
 	ovs-vsctl add-port $BR_INT vxlan0 -- set interface vxlan0 type=vxlan options:remote_ip=$REMOTE_PF_IP options:key=100 options:dst_port=4789
 	ovs-vsctl add-port $BR_INT $REP
 	ovs-vsctl add-port $BR_EX  $PF
