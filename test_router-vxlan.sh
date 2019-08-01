@@ -84,7 +84,7 @@ ovs-ofctl add-flow $BR_INT table=0,in_port=$REP,icmp,nw_dst=$VM_ROUTE_IP,icmp_ty
 ovs-ofctl add-flow $BR_INT table=0,in_port=$PATCH_INT,icmp,nw_dst=$ROUTE_IP,icmp_type=8,icmp_code=0,actions=push:"NXM_OF_ETH_SRC[]",push:"NXM_OF_ETH_DST[]",pop:"NXM_OF_ETH_SRC[]",pop:"NXM_OF_ETH_DST[]",push:"NXM_OF_IP_SRC[]",push:"NXM_OF_IP_DST[]",pop:"NXM_OF_IP_SRC[]",pop:"NXM_OF_IP_DST[]",load:"0xff->NXM_NX_IP_TTL[]",load:"0->NXM_OF_ICMP_TYPE[]",in_port
 
 # request
-ovs-ofctl add-flow $BR_INT "table=0,priority=100,in_port=$REP,arp actions=NORMAL"
+ovs-ofctl add-flow $BR_INT "table=0,priority=101,in_port=$REP,arp actions=NORMAL"
 ovs-ofctl add-flow $BR_INT "table=0,priority=100,in_port=$REP actions=load:0x6757->NXM_NX_REG6[],load:0x7->OXM_OF_METADATA[],load:0->OXM_OF_IN_PORT[],resubmit(,5)"
 ovs-ofctl add-flow $BR_INT "table=5,priority=200,ip,reg6=0x6757,dl_src=$VF_MAC,nw_src=$VM_IP actions=resubmit(,10)"
 ovs-ofctl add-flow $BR_INT "table=10,priority=100,ip,reg6=0x6757 actions=ct(table=15,zone=OXM_OF_METADATA[0..15])"
