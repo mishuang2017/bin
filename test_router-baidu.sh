@@ -89,7 +89,7 @@ ovs-ofctl add-flow $BR_INT "table=0, in_port=$PATCH_INT, dl_type=0x0806, nw_dst=
 ovs-ofctl add-flow $BR_INT table=0,in_port=$REP,icmp,nw_dst=$VM_ROUTE_IP,icmp_type=8,icmp_code=0,actions=push:"NXM_OF_ETH_SRC[]",push:"NXM_OF_ETH_DST[]",pop:"NXM_OF_ETH_SRC[]",pop:"NXM_OF_ETH_DST[]",push:"NXM_OF_IP_SRC[]",push:"NXM_OF_IP_DST[]",pop:"NXM_OF_IP_SRC[]",pop:"NXM_OF_IP_DST[]",load:"0xff->NXM_NX_IP_TTL[]",load:"0->NXM_OF_ICMP_TYPE[]",in_port
 ovs-ofctl add-flow $BR_INT table=0,in_port=$PATCH_INT,icmp,nw_dst=$ROUTE_IP,icmp_type=8,icmp_code=0,actions=push:"NXM_OF_ETH_SRC[]",push:"NXM_OF_ETH_DST[]",pop:"NXM_OF_ETH_SRC[]",pop:"NXM_OF_ETH_DST[]",push:"NXM_OF_IP_SRC[]",push:"NXM_OF_IP_DST[]",pop:"NXM_OF_IP_SRC[]",pop:"NXM_OF_IP_DST[]",load:"0xff->NXM_NX_IP_TTL[]",load:"0->NXM_OF_ICMP_TYPE[]",in_port
 
-# request
+# SNAT request
 ovs-ofctl add-flow $BR_INT "table=0,priority=101,in_port=$REP,arp actions=NORMAL"
 ovs-ofctl add-flow $BR_INT "table=0,priority=100,in_port=$REP actions=load:0x6757->NXM_NX_REG6[],load:0x7->OXM_OF_METADATA[],load:0->OXM_OF_IN_PORT[],resubmit(,5)"
 ovs-ofctl add-flow $BR_INT "table=5,priority=200,ip,reg6=0x6757,dl_src=$VF_MAC,nw_src=$VM_IP actions=resubmit(,10)"
@@ -105,17 +105,13 @@ ovs-ofctl add-flow $BR_INT "table=61,priority=50,ip,reg5=0x1b actions=resubmit(,
 ovs-ofctl add-flow $BR_INT "table=70,priority=50,ip actions=move:NXM_OF_IP_SRC[]->NXM_NX_REG5[],move:NXM_NX_REG6[]->NXM_OF_IP_SRC[],load:0x1->NXM_OF_IP_SRC[31],ct(commit,table=71,zone=65534,nat(src=$ROUTE_IP),exec(move:NXM_NX_REG6[]->NXM_NX_CT_MARK[],move:NXM_NX_REG5[]->NXM_NX_CT_LABEL[0..31]))"
 ovs-ofctl add-flow $BR_INT "table=71,priority=50,ip actions=mod_dl_src:$ROUTE_MAC,mod_dl_dst:$MAC_BR_EX,output:$PATCH_INT"
 
-# vm2
-ovs-ofctl add-flow $BR_INT "table=0,priority=200,in_port=$REP2 actions=output:$PATCH_INT"
-
 # vxlan
 ovs-ofctl add-flow $BR_INT "table=0,priority=101,ct_state=-trk,in_port=$REP,ip,nw_dst=192.168.0.200 actions=ct(table=1)"
 ovs-ofctl add-flow $BR_INT "table=1,priority=10,ct_state=+trk+new,ip actions=ct(commit),normal"
 ovs-ofctl add-flow $BR_INT "table=1,priority=10,ct_state=+trk+est,ip actions=normal"
 ovs-ofctl add-flow $BR_INT "table=1,priority=1, actions=normal"
 
-
-# reply
+# SNAT reply
 ovs-ofctl add-flow $BR_INT "table=0,priority=20,in_port=$PATCH_INT actions=load:0->OXM_OF_IN_PORT[],resubmit(,50)"
 ovs-ofctl add-flow $BR_INT "table=50,priority=50,ip actions=ct(table=51,zone=65534,nat)"
 ovs-ofctl add-flow $BR_INT "table=51,priority=50,ct_mark=0x6757,ip actions=mod_dl_src:$ROUTE_MAC,mod_dl_dst:$VF_MAC,load:0x6757->NXM_NX_REG7[],move:NXM_NX_CT_LABEL[0..31]->NXM_OF_IP_DST[],load:0x7->OXM_OF_METADATA[],resubmit(,100)"
@@ -134,11 +130,9 @@ ovs-ofctl add-flow $BR_INT "table=1,priority=1, actions=normal"
 
 ovs-ofctl add-flow $BR_EX "table=0,priority=50,in_port=$PATCH_EX,ip,nw_dst=$REMOTE_PF_IP,dl_dst=$MAC_BR_EX actions=mod_dl_dst:$MAC_REMOTE_PF,output:NORMAL"
 
-# We need to differentiate the NAT packet and the management packet
+# none vxlan for vm2
+ovs-ofctl add-flow $BR_INT "table=0,priority=200,in_port=$REP2 actions=output:$PATCH_INT"
 ovs-ofctl add-flow $BR_EX "table=0,in_port=$PF,dl_dst=$VF2_MAC actions=output:$PATCH_EX"
-# ovs-ofctl add-flow $BR_EX "table=1,ct_mark=0 actions=output:$BR_EX"
-# ovs-ofctl add-flow $BR_EX "table=1,ct_mark=0x6757 actions=output:$PATCH_EX"
-
 ovs-ofctl add-flow $BR_INT "table=0,priority=100,dl_dst=$VF2_MAC actions=output:$REP2"
 
 set +x
