@@ -5,10 +5,10 @@ set -x
 PF=enp4s0f0
 REMOTE_PF=enp4s0f0
 if [[ $(hostname -s) == "dev-r630-03" ]]; then
-	REMOTE_HOST=10.12.205.14
+	REMOTE_HOST=10.112.205.14
 fi
 if [[ $(hostname -s) == "dev-r630-04" ]]; then
-	REMOTE_HOST=10.12.205.13
+	REMOTE_HOST=10.112.205.13
 fi
 VF=enp4s0f3
 

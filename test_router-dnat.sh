@@ -22,10 +22,10 @@ VM_ROUTE_IP_HEX=0xc0a80001
 
 if [[ $(hostname -s) == "dev-r630-03" ]]; then
 	MAC_REMOTE_PF=24:8a:07:88:27:ca
-	REMOTE_HOST=10.12.205.14
+	REMOTE_HOST=10.112.205.14
 elif [[ $(hostname -s) == "dev-r630-04" ]]; then
 	MAC_REMOTE_PF=24:8a:07:88:27:9a
-	REMOTE_HOST=10.12.205.13
+	REMOTE_HOST=10.112.205.13
 fi
 REMOTE_PF_IP=8.9.10.11
 ifconfig $PF 0
