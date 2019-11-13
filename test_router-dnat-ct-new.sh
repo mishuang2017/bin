@@ -101,7 +101,7 @@ ovs-ofctl add-flow $BR_INT "table=20,priority=1 actions=resubmit(,55)"
 ovs-ofctl add-flow $BR_INT "table=55,priority=200,metadata=0x7,dl_dst=$ROUTE_MAC actions=load:0x1b->NXM_NX_REG5[],resubmit(,60)"
 ovs-ofctl add-flow $BR_INT "table=60,priority=50,ip actions=resubmit(,61)"
 ovs-ofctl add-flow $BR_INT "table=61,priority=50,ip,reg5=0x1b actions=resubmit(,70)"
-ovs-ofctl add-flow $BR_INT "table=70,priority=50,ip actions=move:NXM_OF_IP_SRC[]->NXM_NX_REG5[],move:NXM_NX_REG6[]->NXM_OF_IP_SRC[],load:0x1->NXM_OF_IP_SRC[31],ct(commit,table=71,zone=65534,nat(src=$ROUTE_IP),exec(move:NXM_NX_REG6[]->NXM_NX_CT_MARK[],move:NXM_NX_REG5[]->NXM_NX_CT_LABEL[0..31]))"
+ovs-ofctl add-flow $BR_INT "table=70,priority=50,ip actions=move:NXM_OF_IP_SRC[]->NXM_NX_REG5[],move:NXM_NX_REG6[]->NXM_OF_IP_SRC[],load:0x1->NXM_OF_IP_SRC[31],ct(commit,table=71,zone=65534,nat(src=$ROUTE_IP:60000-60005),exec(move:NXM_NX_REG6[]->NXM_NX_CT_MARK[],move:NXM_NX_REG5[]->NXM_NX_CT_LABEL[0..31]))"
 ovs-ofctl add-flow $BR_INT "table=71,priority=50,ip actions=mod_dl_src:$ROUTE_MAC,mod_dl_dst:$MAC_BR_EX,output:$PATCH_INT"
 
 # vxlan
@@ -119,7 +119,10 @@ ovs-ofctl add-flow $BR_INT "table=105,priority=100,ip,reg7=0x6757 actions=ct(tab
 ovs-ofctl add-flow $BR_INT "table=110,priority=22,ct_state=+new-est-rel-rpl-inv+trk,ip actions=ct(commit,table=115,zone=NXM_NX_CT_ZONE[])"
 ovs-ofctl add-flow $BR_INT "table=110,priority=22,ct_state=+new-est-rel+rpl-inv+trk,ip actions=ct(commit,table=115,zone=NXM_NX_CT_ZONE[])"
 ovs-ofctl add-flow $BR_INT "table=110,priority=22,ct_state=-new+est-rel-rpl-inv+trk,ip actions=resubmit(,115)"
+ovs-ofctl add-flow $BR_INT "table=110,priority=22,ct_state=-new+est-rel+rpl-inv+trk,ip actions=resubmit(,115)"
 ovs-ofctl add-flow $BR_INT "table=115,priority=100,reg7=0x6757 actions=output:$REP"
+
+# recirc_id(0x29),in_port(enp4s0f0),ct_state(-new+est-rel+rpl-inv+trk),eth_type(0x0800),ipv4(frag=no), packets:0, bytes:0, used:1.860s, actions:drop
 
 # vxlan
 ovs-ofctl add-flow $BR_INT "table=0,priority=30,in_port=vxlan0,ip actions=ct(table=1)"
