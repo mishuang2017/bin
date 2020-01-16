@@ -101,7 +101,7 @@ ovs-ofctl add-flow $BR_INT "table=20,priority=1 actions=resubmit(,55)"
 ovs-ofctl add-flow $BR_INT "table=55,priority=200,metadata=0x7,dl_dst=$ROUTE_MAC actions=load:0x1b->NXM_NX_REG5[],resubmit(,60)"
 ovs-ofctl add-flow $BR_INT "table=60,priority=50,ip actions=resubmit(,61)"
 ovs-ofctl add-flow $BR_INT "table=61,priority=50,ip,reg5=0x1b actions=resubmit(,70)"
-ovs-ofctl add-flow $BR_INT "table=70,priority=50,ip actions=move:NXM_OF_IP_SRC[]->NXM_NX_REG5[],move:NXM_NX_REG6[]->NXM_OF_IP_SRC[],load:0x1->NXM_OF_IP_SRC[31],ct(commit,table=71,zone=65534,nat(src=$ROUTE_IP:60000-60005),exec(move:NXM_NX_REG6[]->NXM_NX_CT_MARK[],move:NXM_NX_REG5[]->NXM_NX_CT_LABEL[0..31]))"
+ovs-ofctl add-flow $BR_INT "table=70,priority=50,ip actions=move:NXM_OF_IP_SRC[]->NXM_NX_REG5[],move:NXM_NX_REG6[]->NXM_OF_IP_SRC[],load:0x1->NXM_OF_IP_SRC[31],ct(commit,table=71,zone=65534,nat(src=$ROUTE_IP:5000-65000),exec(move:NXM_NX_REG6[]->NXM_NX_CT_MARK[],move:NXM_NX_REG5[]->NXM_NX_CT_LABEL[0..31]))"
 ovs-ofctl add-flow $BR_INT "table=71,priority=50,ip actions=mod_dl_src:$ROUTE_MAC,mod_dl_dst:$MAC_BR_EX,output:$PATCH_INT"
 
 # vxlan
