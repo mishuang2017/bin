@@ -4,8 +4,13 @@ set -x
 
 PF=enp4s0f0
 REMOTE_PF=enp4s0f0
+
 VF=enp4s0f3
 VF2=enp4s0f4
+
+VF=enp4s0f0v1
+VF2=enp4s0f0v2
+
 REP=enp4s0f0_1
 REP2=enp4s0f0_2
 
