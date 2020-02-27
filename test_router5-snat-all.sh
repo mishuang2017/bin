@@ -26,7 +26,7 @@ MAC_ROUTE="24:8a:07:ad:77:99"
 # TPA: target protocol address
 # THA: target hardware address
 
-for i in {1..96}; do
+for i in {1..48}; do
 	rep=ens1f0_$i
 
 # 	vf=ens1f$((i+2))

@@ -2,6 +2,9 @@
 
 set -x
 
+n=3
+[[ $# == 1 ]] && n=$1
+
 pf=ens1f0
 br=br
 
@@ -26,7 +29,7 @@ MAC_ROUTE="24:8a:07:ad:77:99"
 # TPA: target protocol address
 # THA: target hardware address
 
-for i in {1..48}; do
+for (( i = 0; i < $n; i ++ )); do
 	rep=ens1f0_$i
 
 	vf=ens1f0v$i
