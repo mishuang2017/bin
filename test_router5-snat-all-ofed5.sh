@@ -26,15 +26,14 @@ MAC_ROUTE="24:8a:07:ad:77:99"
 # TPA: target protocol address
 # THA: target hardware address
 
-for i in {1..96}; do
+for i in {1..48}; do
 	rep=ens1f0_$i
 
-# 	vf=ens1f$((i+2))
-	ns=n1$i
-	vf=$(ip netns exe $ns ls /sys/class/net | head -1)
+	vf=ens1f0v$i
 
 	reg6=$i
 	ovs-vsctl add-port $br $rep
+	ns=n1$i
 	VF_MAC=$(ip netns exec $ns cat /sys/class/net/$vf/address)
 	ip netns exec $ns ifconfig $vf 192.168.0.$reg6/24 up
 	ip netns exec $ns ip route add 8.9.10.0/24 via 192.168.0.254 dev $vf
