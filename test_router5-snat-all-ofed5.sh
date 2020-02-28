@@ -3,9 +3,13 @@
 set -x
 
 n=3
-[[ $# == 1 ]] && n=$1
+if [[ $# != 2 ]]; then
+	echo "Usage: $0 enp4s0f0 3"
+fi
 
-pf=ens1f0
+pf=$1
+n=$2
+
 br=br
 
 systemctl start openvswitch.service
@@ -14,9 +18,9 @@ ovs-vsctl add-br $br
 ovs-vsctl add-port $br $pf 
 
 
-# [[ $(hostname -s) == "dev-r630-03" ]] && REMOTE_PF_MAC=24:8a:07:88:27:ca
-# [[ $(hostname -s) == "dev-r630-04" ]] && REMOTE_PF_MAC=24:8a:07:88:27:9a
-REMOTE_PF_MAC=98:03:9b:13:f4:48
+[[ $(hostname -s) == "dev-r630-03" ]] && REMOTE_PF_MAC=24:8a:07:88:27:ca
+[[ $(hostname -s) == "dev-r630-04" ]] && REMOTE_PF_MAC=24:8a:07:88:27:9a
+[[ $(hostname -s) == "clx-ibmc-01" ]] && REMOTE_PF_MAC=98:03:9b:13:f4:48
 
 #define ARPOP_REQUEST   1               /* ARP request                  */
 #define ARPOP_REPLY     2               /* ARP reply                    */
@@ -29,10 +33,10 @@ MAC_ROUTE="24:8a:07:ad:77:99"
 # TPA: target protocol address
 # THA: target hardware address
 
-for (( i = 0; i < $n; i ++ )); do
-	rep=ens1f0_$i
+for (( i = 1; i <= $n; i ++ )); do
+	rep=${pf}_${i}
 
-	vf=ens1f0v$i
+	vf=${pf}v$i
 
 	reg6=$i
 	ovs-vsctl add-port $br $rep
