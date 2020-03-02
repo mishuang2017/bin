@@ -5,6 +5,7 @@ set -x
 n=3
 if [[ $# != 2 ]]; then
 	echo "Usage: $0 enp4s0f0 3"
+	exit
 fi
 
 pf=$1
