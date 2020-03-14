@@ -22,6 +22,7 @@ ovs-vsctl add-port $br $pf
 [[ $(hostname -s) == "dev-r630-03" ]] && REMOTE_PF_MAC=24:8a:07:88:27:ca
 [[ $(hostname -s) == "dev-r630-03" ]] && REMOTE_PF_MAC=b8:59:9f:bb:31:82
 [[ $(hostname -s) == "dev-r630-04" ]] && REMOTE_PF_MAC=24:8a:07:88:27:9a
+[[ $(hostname -s) == "dev-r630-04" ]] && REMOTE_PF_MAC=b8:59:9f:bb:31:66
 [[ $(hostname -s) == "clx-ibmc-01" ]] && REMOTE_PF_MAC=98:03:9b:13:f4:48
 [[ $(hostname -s) == "clx-ibmc-03" ]] && REMOTE_PF_MAC=98:03:9b:13:f4:48
 
