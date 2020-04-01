@@ -29,7 +29,7 @@ ovs-vsctl add-port $br $pf
 #define ARPOP_REQUEST   1               /* ARP request                  */
 #define ARPOP_REPLY     2               /* ARP reply                    */
 
-MAC_ROUTE="24:8a:07:ad:77:99"
+MAC_ROUTE="24:8a:07:ad:77:01"
 
 # SPA: source protocol address
 # SHA: source hardware address
@@ -51,11 +51,15 @@ for (( i = 1; i <= $n; i ++ )); do
 	ip netns exec $ns ifconfig $vf 192.168.0.$reg6/24 up
 	ip netns exec $ns ip route add 8.9.10.0/24 via 192.168.0.254 dev $vf
 
-	ovs-ofctl add-flow $br "table=0, in_port=$rep, dl_type=0x0806, nw_dst=192.168.0.254, actions=load:0x2->NXM_OF_ARP_OP[], move:NXM_OF_ETH_SRC[]->NXM_OF_ETH_DST[], mod_dl_src=${MAC_ROUTE}, move:NXM_NX_ARP_SHA[]->NXM_NX_ARP_THA[], move:NXM_OF_ARP_SPA[]->NXM_OF_ARP_TPA[], load:0x248a07ad7799->NXM_NX_ARP_SHA[], load:0xc0a800fe->NXM_OF_ARP_SPA[], in_port"
-	ovs-ofctl add-flow $br "table=0, in_port=$pf, dl_type=0x0806, nw_dst=8.9.10.1, actions=load:0x2->NXM_OF_ARP_OP[], move:NXM_OF_ETH_SRC[]->NXM_OF_ETH_DST[], mod_dl_src:${MAC_ROUTE}, move:NXM_NX_ARP_SHA[]->NXM_NX_ARP_THA[], move:NXM_OF_ARP_SPA[]->NXM_OF_ARP_TPA[], load:0x248a07ad7799->NXM_NX_ARP_SHA[], load:0x08090a01->NXM_OF_ARP_SPA[], in_port"
+	ovs-ofctl add-flow $br "table=0, in_port=$rep, dl_type=0x0806, nw_dst=192.168.0.254, actions=load:0x2->NXM_OF_ARP_OP[], move:NXM_OF_ETH_SRC[]->NXM_OF_ETH_DST[], mod_dl_src=${MAC_ROUTE}, move:NXM_NX_ARP_SHA[]->NXM_NX_ARP_THA[], move:NXM_OF_ARP_SPA[]->NXM_OF_ARP_TPA[], load:0x248a07ad7701->NXM_NX_ARP_SHA[], load:0xc0a800fe->NXM_OF_ARP_SPA[], in_port"
+
+	for (( j = 1; j <= 10; j ++ )); do
+		j2=$(printf "%02d" $j)
+		ovs-ofctl add-flow $br "table=0, in_port=$pf, dl_type=0x0806, nw_dst=8.9.10.$j, actions=load:0x2->NXM_OF_ARP_OP[], move:NXM_OF_ETH_SRC[]->NXM_OF_ETH_DST[], mod_dl_src:24:8a:07:ad:77:$j2, move:NXM_NX_ARP_SHA[]->NXM_NX_ARP_THA[], move:NXM_OF_ARP_SPA[]->NXM_OF_ARP_TPA[], load:0x248a07ad7701->NXM_NX_ARP_SHA[], load:0x08090a$j2->NXM_OF_ARP_SPA[], in_port"
+	done
 
 	ovs-ofctl add-flow $br "table=0,in_port=$rep,priority=10,ip,ct_state=-trk,action=load:$reg6->NXM_NX_REG6[],ct(nat,table=10)"
-	ovs-ofctl add-flow $br "table=10,in_port=$rep,ip,reg6=$reg6,ct_state=+trk+new,action=ct(commit,nat(src=8.9.10.1:5000-50000),exec(move:NXM_NX_REG6[]->NXM_NX_CT_MARK[])),mod_dl_src:${MAC_ROUTE},mod_dl_dst:${REMOTE_PF_MAC},$pf"
+	ovs-ofctl add-flow $br "table=10,in_port=$rep,ip,reg6=$reg6,ct_state=+trk+new,action=ct(commit,nat(src=8.9.10.1-8.9.10.10:5000-65000),exec(move:NXM_NX_REG6[]->NXM_NX_CT_MARK[])),mod_dl_src:${MAC_ROUTE},mod_dl_dst:${REMOTE_PF_MAC},$pf"
 	ovs-ofctl add-flow $br "table=10,in_port=$rep,ct_state=+trk+est-rpl,ip,action=mod_dl_src:${MAC_ROUTE},mod_dl_dst:${REMOTE_PF_MAC},$pf"
 
 	ovs-ofctl add-flow $br "table=0,in_port=$pf,priority=10,ip,ct_state=-trk,action=ct(nat,table=20)"
