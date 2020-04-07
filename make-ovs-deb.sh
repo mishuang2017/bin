@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# http://docs.openvswitch.org/en/latest/intro/install/debian/
+
 . /etc/os-release
 if [ -z "$PRETTY_NAME" ]; then
     echo "Cannot get host information"
@@ -11,8 +13,12 @@ echo $PRETTY_NAME
 # export PATH="/usr/libexec/python2-sphinx:$PATH"
 
 # config
-[ -z "$REPO" ] && REPO="file:////images/chrism/ovs"
-[ -z "$BRANCH" ] && BRANCH=ct-one-table-2.10
+# [ -z "$REPO" ] && REPO="file:////images/chrism/ovs"
+# [ -z "$BRANCH" ] && BRANCH=ct-one-table-2.10
+
+[ -z "$REPO" ] && REPO="file:////images/chrism/openvswitch"
+[ -z "$BRANCH" ] && BRANCH=ct-one-table-2.13.0
+
 [ -z $TMPDIR ] && TMPDIR="/tmp/tmp$$-ovs"
 
 # run
@@ -34,7 +40,7 @@ cd $TMPDIR
 CLONEDIR="ovs-$BRANCH"
 git clone --depth=100 --branch=$BRANCH --single-branch $REPO $CLONEDIR
 cd $CLONEDIR
-dpkg-checkbuilddeps
+# dpkg-checkbuilddeps
 git fetch -q --tags
 
 VERSION=""
