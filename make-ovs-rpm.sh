@@ -17,8 +17,12 @@ export PATH="/usr/libexec/python2-sphinx:$PATH"
 
 # config
 # [ -z "$REPO" ] && REPO="file:///.autodirect/mtrsysgwork/roid/gerrit2/openvswitch"
-[ -z "$REPO" ] && REPO="file:///images/chrism/ovs-roi"
-[ -z "$BRANCH" ] && BRANCH=${1:-master}
+# [ -z "$REPO" ] && REPO="file:///images/chrism/ovs-roi"
+# [ -z "$BRANCH" ] && BRANCH=${1:-master}
+
+[ -z "$REPO" ] && REPO="file:///images/chrism/ovs_2.13"
+[ -z "$BRANCH" ] && BRANCH=${1:-2.13.0-ct}
+
 SPEC="./rhel/openvswitch-fedora.spec"
 [ -z $TMPDIR ] && TMPDIR="/tmp/tmp$$-ovs"
 
@@ -41,7 +45,7 @@ else
 fi
 sudo $DNF install -y PyQt4 libcap-ng-devel selinux-policy-devel \
                      python-sphinx python3-devel policycoreutils-python-utils \
-                     groff graphviz python-twisted-core python-zope-interface \
+                     groff graphviz python-zope-interface python3-sphinx \
                      unbound unbound-devel
 
 # clone and prep

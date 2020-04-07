@@ -13,8 +13,12 @@ if [ ! -e /usr/bin/rpmbuild ]; then
 fi
 
 # config
-[ -z "$REPO" ] && REPO="/images/chrism/linux"
-[ -z "$BRANCH" ] && BRANCH='4.19'
+# [ -z "$REPO" ] && REPO="/images/chrism/linux"
+# [ -z "$BRANCH" ] && BRANCH='4.19'
+
+[ -z "$REPO" ] && REPO="/images/chrism/5.4-ct-rpm"
+[ -z "$BRANCH" ] && BRANCH='5.4-ct'
+
 if [ "$DEBUG" == "1" ]; then
     CONFIG=/labhome/roid/scripts/ovs/.config_debug
 else
@@ -22,7 +26,8 @@ else
 fi
 # CONFIG=/labhome/chrism/roi.config
 # CONFIG=/labhome/chrism/roi.config.debug
-CONFIG=/images/chrism/linux/.config
+# CONFIG=/images/chrism/linux/.config
+CONFIG=/labhome/chrism/sm/config/config-5.4.19-100.fc30.x86_64
 [ -z $TMPDIR ] && TMPDIR="/tmp/tmp$$-kernel"
 
 # check for free space
