@@ -36,9 +36,6 @@ sudo apt-get install -y dh-autoreconf build-essential fakeroot devscripts \
                      libcap-ng-dev python-sphinx python3-dev python3-twisted \
                      groff graphviz python3-zope.interface
 
-# install the following  install python3-twisted-conch, python3-zopeinterface
-# python3-zope.interface, python3-twisted
-
 # clone and prep
 CLONEDIR="ovs-$BRANCH"
 git clone --depth=100 --branch=$BRANCH --single-branch $REPO $CLONEDIR
