@@ -32,9 +32,9 @@ mkdir -p $TMPDIR
 cd $TMPDIR
 
 # install dependencies
-# sudo apt-get install -y dh-autoreconf build-essential fakeroot devscripts \
-#                      libcap-ng-dev python-sphinx python3-dev python-twisted-conch \
-#                      groff graphviz python-twisted-core python-zopeinterface
+sudo apt-get install -y dh-autoreconf build-essential fakeroot devscripts \
+                     libcap-ng-dev python-sphinx python3-dev python3-twisted \
+                     groff graphviz python3-zope.interface
 
 # install the following  install python3-twisted-conch, python3-zopeinterface
 # python3-zope.interface, python3-twisted
