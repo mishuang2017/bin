@@ -54,7 +54,7 @@ for (( i = 1; i <= $n; i ++ )); do
 	ovs-ofctl add-flow $br "table=0, in_port=$rep, dl_type=0x0806, nw_dst=192.168.0.254, actions=load:0x2->NXM_OF_ARP_OP[], move:NXM_OF_ETH_SRC[]->NXM_OF_ETH_DST[], mod_dl_src=${MAC_ROUTE}, move:NXM_NX_ARP_SHA[]->NXM_NX_ARP_THA[], move:NXM_OF_ARP_SPA[]->NXM_OF_ARP_TPA[], load:0x248a07ad7701->NXM_NX_ARP_SHA[], load:0xc0a800fe->NXM_OF_ARP_SPA[], in_port"
 
 	for (( j = 1; j <= 10; j ++ )); do
-		j2=$(printf "%02d" $j)
+		j2=$(printf "%02x" $j)
 		ovs-ofctl add-flow $br "table=0, in_port=$pf, dl_type=0x0806, nw_dst=8.9.10.$j, actions=load:0x2->NXM_OF_ARP_OP[], move:NXM_OF_ETH_SRC[]->NXM_OF_ETH_DST[], mod_dl_src:24:8a:07:ad:77:$j2, move:NXM_NX_ARP_SHA[]->NXM_NX_ARP_THA[], move:NXM_OF_ARP_SPA[]->NXM_OF_ARP_TPA[], load:0x248a07ad7701->NXM_NX_ARP_SHA[], load:0x08090a$j2->NXM_OF_ARP_SPA[], in_port"
 	done
 
