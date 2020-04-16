@@ -5,6 +5,7 @@ set -x
 pf=enp4s0f0
 rep=enp4s0f0_1
 br=br
+vf=enp4s0f0v1
 
 # arp responder
 use_ar=0
@@ -15,12 +16,13 @@ ovs-vsctl add-br $br
 ovs-vsctl add-port $br $pf  -- set Interface $pf  ofport_request=5
 ovs-vsctl add-port $br $rep -- set Interface $rep ofport_request=2
 
-ip netns exec n11 ifconfig enp4s0f3 192.168.0.2/24 up
-ip netns exec n11 ip route add 8.9.10.0/24 via 192.168.0.1 dev enp4s0f3
+ip netns exec n11 ifconfig $vf 192.168.0.2/24 up
+ip netns exec n11 ip route add 8.9.10.0/24 via 192.168.0.1 dev $vf
 
-VF_MAC=$(ip netns exec n11 cat /sys/class/net/enp4s0f3/address)
+VF_MAC=$(ip netns exec n11 cat /sys/class/net/$vf/address)
 [[ $(hostname -s) == "dev-r630-03" ]] && REMOTE_PF_MAC=24:8a:07:88:27:ca
 [[ $(hostname -s) == "dev-r630-04" ]] && REMOTE_PF_MAC=24:8a:07:88:27:9a
+[[ $(hostname -s) == "dev-r630-03" ]] && REMOTE_PF_MAC=b8:59:9f:bb:31:82
 
 #define ARPOP_REQUEST   1               /* ARP request                  */
 #define ARPOP_REPLY     2               /* ARP reply                    */

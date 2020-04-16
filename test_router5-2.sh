@@ -4,18 +4,21 @@ set -x
 
 br=br
 
+vf2=enp4s0f0v1
+
 ovs-ofctl del-flows $br
 ovs-ofctl add-flow $br "table=0,priority=0,actions=NORMAL"
 
-ip netns exec n11 ifconfig enp4s0f3 192.168.0.2/24 up
-# ip netns exec n11 ip route add 8.9.10.0/24 via 192.168.0.1 dev enp4s0f3
+ip netns exec n11 ifconfig $vf2 192.168.0.2/24 up
+# ip netns exec n11 ip route add 8.9.10.0/24 via 192.168.0.1 dev $vf2
 
 # MAC2=`ip netns exec host2_ns cat /sys/class/net/host2/address`
 # MAC1=02:25:d0:13:01:02
 
-MAC1=$(ip netns exec n11 cat /sys/class/net/enp4s0f3/address)
+MAC1=$(ip netns exec n11 cat /sys/class/net/$vf2/address)
 [[ $(hostname -s) == "dev-r630-03" ]] && MAC2=24:8a:07:88:27:ca
 [[ $(hostname -s) == "dev-r630-04" ]] && MAC2=24:8a:07:88:27:9a
+[[ $(hostname -s) == "dev-r630-03" ]] && MAC2=b8:59:9f:bb:31:82
 
 #define ARPOP_REQUEST   1               /* ARP request                  */
 #define ARPOP_REPLY     2               /* ARP reply                    */
