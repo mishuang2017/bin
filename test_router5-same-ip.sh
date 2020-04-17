@@ -21,7 +21,7 @@ ip netns add $n
 ip link set dev $vf netns $n
 ip netns exec $n ip link set mtu 1450 dev $vf
 ip netns exec $n ip link set dev $vf up
-ip netns exec $n ip addr add $vf_ip/24 brd + dev $vf
+ip netns exec $n ip addr add dev $vf $vf_ip/24
 
 VF_MAC=$(ip netns exec $n cat /sys/class/net/$vf/address)
 [[ $(hostname -s) == "dev-r630-03" ]] && REMOTE_PF_MAC=b8:59:9f:bb:31:82
