@@ -7,14 +7,15 @@ n=1
 if [[ $(hostname -s) == "dev-r630-03" ]]; then
 	gateway_mac="b8:59:9f:bb:31:82"
 	host_num=13
+	host_outdev=enp4s0f0
 fi
 
 if [[ $(hostname -s) == "dev-r630-04" ]]; then
 	gateway_mac="b8:59:9f:bb:31:66"
 	host_num=14
+	host_outdev=enp4s0f0np0
 fi
 
-host_outdev=enp4s0f0np0
 enable_skip_hw=0
 
 if [ $enable_skip_hw -eq 1 ] 
@@ -103,8 +104,8 @@ function main()
 
 	for((i=1;i<$((n+1));++i)); do
 		byte=`printf "%02x" $((i+1))`
-		add_container_ingress_rules enp4s0f0np0_$i
-		add_container_egress_rules "enp4s0f0np0_$i" "192.168.1.1$i" "02:25:d0:$host_num:01:$byte"
+		add_container_ingress_rules ${host_outdev}_$i
+		add_container_egress_rules "${host_outdev}_$i" "192.168.1.1$i" "02:25:d0:$host_num:01:$byte"
 
 		ns=n1${i}
 		vf=$(ip netns exec $ns ls /sys/class/net | grep en)
