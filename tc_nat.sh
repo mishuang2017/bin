@@ -63,18 +63,24 @@ function add_container_ingress_rules()
 	add_ingress_qdisc "$if_name"
 
 	for proto in icmp tcp; do
-		tc filter add dev $if_name ingress prio 1 chain 0 proto ip flower $SKIP_HW ip_flags nofrag ip_proto $proto action ct pipe action goto chain 2 ;
-		tc filter add dev $if_name ingress prio 1 chain 2 proto ip flower $SKIP_HW ip_flags nofrag ip_proto $proto ct_state +trk+new action ct commit nat src addr $host_ip port $port_range pipe action goto chain 99;
-		tc filter add dev $if_name ingress prio 1 chain 2 proto ip flower $SKIP_HW ip_flags nofrag ip_proto $proto ct_state +trk+est action ct nat pipe action goto chain 99;
-		tc filter add dev $if_name ingress prio 1 chain 99 proto ip flower $SKIP_HW ip_flags nofrag action pedit ex munge eth dst set $gateway_mac munge eth src set $host_mac pipe action mirred egress redirect dev $host_outdev
+		tc filter add dev $if_name ingress prio 1 chain 0 proto ip flower $SKIP_HW ip_flags nofrag ip_proto $proto \
+			action ct pipe action goto chain 2 ;
+		tc filter add dev $if_name ingress prio 1 chain 2 proto ip flower $SKIP_HW ip_flags nofrag ip_proto $proto ct_state +trk+new \
+			action ct commit nat src addr $host_ip port $port_range pipe action goto chain 99;
+		tc filter add dev $if_name ingress prio 1 chain 2 proto ip flower $SKIP_HW ip_flags nofrag ip_proto $proto ct_state +trk+est \
+			action ct nat pipe action goto chain 99;
+		tc filter add dev $if_name ingress prio 1 chain 99 proto ip flower $SKIP_HW ip_flags nofrag \
+			action pedit ex munge eth dst set $gateway_mac munge eth src set $host_mac pipe action mirred egress redirect dev $host_outdev
 	done
 }
 
 function add_container_egress_common_rules()
 {
 	for proto in icmp tcp; do
-		tc filter add dev $host_outdev ingress prio 1 chain 0 proto ip flower $SKIP_HW ip_flags nofrag ip_proto $proto action ct pipe action goto chain 3 ;
-		tc filter add dev $host_outdev ingress prio 1 chain 3 proto ip flower $SKIP_HW ip_flags nofrag ip_proto $proto ct_state +trk+est action ct nat  pipe goto chain 4;
+		tc filter add dev $host_outdev ingress prio 1 chain 0 proto ip flower $SKIP_HW ip_flags nofrag ip_proto $proto \
+			action ct pipe action goto chain 3 ;
+		tc filter add dev $host_outdev ingress prio 1 chain 3 proto ip flower $SKIP_HW ip_flags nofrag ip_proto $proto ct_state +trk+est \
+			action ct nat  pipe goto chain 4;
 	done
 }
 function add_container_egress_rules()
@@ -82,7 +88,8 @@ function add_container_egress_rules()
 	if_name="$1"
 	if_addr="$2"
 	if_mac="$3"
-	tc filter add dev $host_outdev ingress prio 1 chain 4 proto ip flower $SKIP_HW ip_flags nofrag dst_ip $if_addr action pedit ex munge eth dst set $if_mac pipe action mirred egress redirect dev $if_name
+	tc filter add dev $host_outdev ingress prio 1 chain 4 proto ip flower $SKIP_HW ip_flags nofrag dst_ip $if_addr \
+		action pedit ex munge eth dst set $if_mac pipe action mirred egress redirect dev $if_name
 }
 
 function main()
