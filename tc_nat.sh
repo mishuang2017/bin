@@ -1,7 +1,16 @@
 #! /bin/bash
 set -x
-gateway_mac="00:74:9c:b2:7b:19"
-gateway_mac="b8:59:9f:bb:31:66"
+
+if [[ $(hostname -s) == "dev-r630-03" ]]; then
+	gateway_mac="b8:59:9f:bb:31:82"
+	host_num=13
+fi
+
+if [[ $(hostname -s) == "dev-r630-04" ]]; then
+	gateway_mac="b8:59:9f:bb:31:66"
+	host_num=14
+fi
+
 host_outdev=enp4s0f0np0
 enable_skip_hw=0
 
@@ -93,7 +102,7 @@ function main()
 	do
 		byte=`printf "%02x" $((i+1))`
 		add_container_ingress_rules enp4s0f0np0_$i
-		add_container_egress_rules "enp4s0f0np0_$i" "192.168.1.1$i" "02:25:d0:14:01:$byte"
+		add_container_egress_rules "enp4s0f0np0_$i" "192.168.1.1$i" "02:25:d0:$host_num:01:$byte"
 	done;
 }
 
@@ -107,6 +116,7 @@ ip netns exec $ns ip route add 8.9.10.0/24 via 192.168.1.254 dev $vf
 ip netns exec $ns arp -s 192.168.1.254 $gateway_mac
 
 ifconfig $host_outdev 8.9.10.1/24 up
+sleep 1
 
 main
 set +x
