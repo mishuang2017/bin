@@ -30,16 +30,7 @@ function get_local_port_range()
 port_range=`get_local_port_range`;
 #port_range="1024-7900"
 
-function get_host_ip()
-{
-	ip addr show dev enp4s0f0np0 | grep "inet " | awk '{print $2}' | cut -d'/' -f 1
-}
-
-function get_host_mac()
-{
-	ip addr show dev enp4s0f0np0 | grep "link/ether" | awk '{print $2}'
-}
-host_mac=`get_host_mac`
+host_mac=$(cat /sys/class/net/$host_outdev/address)
 
 
 function is_need_create_ingress_qdisc()
@@ -115,9 +106,7 @@ ip netns exec $ns ip route add 8.9.10.0/24 via 192.168.1.254 dev $vf
 ip netns exec $ns arp -s 192.168.1.254 $gateway_mac
 
 ifconfig $host_outdev 8.9.10.1/24 up
-sleep 1
-
-host_ip=`get_host_ip`;
+host_ip=8.9.10.1
 
 main
 set +x
