@@ -1,6 +1,9 @@
 #! /bin/bash
 set -x
 
+n=1
+[[ $# == 1 ]] && n=$1
+
 if [[ $(hostname -s) == "dev-r630-03" ]]; then
 	gateway_mac="b8:59:9f:bb:31:82"
 	host_num=13
@@ -85,11 +88,13 @@ function add_container_egress_rules()
 function main()
 {
 	delete_ingress_qdisc "$host_outdev"
+	for((i=1;i<$((n+1));++i)); do
+		delete_ingress_qdisc "${host_outdev}_${i}"
+	done
 	add_ingress_qdisc "$host_outdev"
 	add_container_egress_common_rules
 
-	for((i=1;i<2;++i));
-	do
+	for((i=1;i<$((n+1));++i)); do
 		byte=`printf "%02x" $((i+1))`
 		add_container_ingress_rules enp4s0f0np0_$i
 		add_container_egress_rules "enp4s0f0np0_$i" "192.168.1.1$i" "02:25:d0:$host_num:01:$byte"
