@@ -98,17 +98,16 @@ function main()
 		byte=`printf "%02x" $((i+1))`
 		add_container_ingress_rules enp4s0f0np0_$i
 		add_container_egress_rules "enp4s0f0np0_$i" "192.168.1.1$i" "02:25:d0:$host_num:01:$byte"
+
+		ns=n1${i}
+		vf=$(ip netns exec $ns ls /sys/class/net | grep en)
+		VF_MAC=$(ip netns exec $ns cat /sys/class/net/$vf/address)
+		echo $VF_MAC
+		ip netns exec $ns ifconfig $vf 192.168.1.1${i}/24 up
+		ip netns exec $ns ip route add 8.9.10.0/24 via 192.168.1.254 dev $vf
+		ip netns exec $ns arp -s 192.168.1.254 $gateway_mac
 	done;
 }
-
-
-ns=n11
-vf=$(ip netns exec $ns ls /sys/class/net | grep en)
-VF_MAC=$(ip netns exec $ns cat /sys/class/net/$vf/address)
-echo $VF_MAC
-ip netns exec $ns ifconfig $vf 192.168.1.11/24 up
-ip netns exec $ns ip route add 8.9.10.0/24 via 192.168.1.254 dev $vf
-ip netns exec $ns arp -s 192.168.1.254 $gateway_mac
 
 ifconfig $host_outdev 8.9.10.1/24 up
 host_ip=8.9.10.1
