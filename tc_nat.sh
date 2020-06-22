@@ -70,9 +70,10 @@ function add_container_ingress_rules()
 			action ct commit nat src addr $host_ip port $port_range pipe action goto chain 99;
 		tc filter add dev $if_name ingress prio 1 chain 2 proto ip flower $SKIP_HW ip_flags nofrag ip_proto $proto ct_state +trk+est \
 			action ct nat pipe action goto chain 99;
-		tc filter add dev $if_name ingress prio 1 chain 99 proto ip flower $SKIP_HW ip_flags nofrag \
-			action pedit ex munge eth dst set $gateway_mac munge eth src set $host_mac pipe action mirred egress redirect dev $host_outdev
 	done
+
+	tc filter add dev $if_name ingress prio 1 chain 99 proto ip flower $SKIP_HW ip_flags nofrag \
+		action pedit ex munge eth dst set $gateway_mac munge eth src set $host_mac pipe action mirred egress redirect dev $host_outdev
 }
 
 function add_container_egress_common_rules()
