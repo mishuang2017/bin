@@ -17,6 +17,8 @@ if [[ $(hostname -s) == "dev-r630-04" ]]; then
 fi
 
 enable_skip_hw=0
+protos="tcp icmp"
+protos="tcp"
 
 if [ $enable_skip_hw -eq 1 ] 
 then
@@ -63,7 +65,7 @@ function add_container_ingress_rules()
 	delete_ingress_qdisc "$if_name"
 	add_ingress_qdisc "$if_name"
 
-	for proto in icmp tcp; do
+	for proto in "$protos"; do
 		tc filter add dev $if_name ingress prio 1 chain 0 proto ip flower $SKIP_HW ip_flags nofrag ip_proto $proto \
 			action ct pipe action goto chain 2 ;
 		tc filter add dev $if_name ingress prio 1 chain 2 proto ip flower $SKIP_HW ip_flags nofrag ip_proto $proto ct_state +trk+new \
@@ -78,7 +80,7 @@ function add_container_ingress_rules()
 
 function add_container_egress_common_rules()
 {
-	for proto in icmp tcp; do
+	for proto in "$protos"; do
 		tc filter add dev $host_outdev ingress prio 1 chain 0 proto ip flower $SKIP_HW ip_flags nofrag ip_proto $proto \
 			action ct pipe action goto chain 3 ;
 		tc filter add dev $host_outdev ingress prio 1 chain 3 proto ip flower $SKIP_HW ip_flags nofrag ip_proto $proto ct_state +trk+est \
