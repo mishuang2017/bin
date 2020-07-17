@@ -107,8 +107,9 @@ function main()
 
 	for((i=1;i<$((n+1));++i)); do
 		byte=`printf "%02x" $((i+1))`
-		add_container_ingress_rules ${host_outdev}_$i
-		add_container_egress_rules "${host_outdev}_$i" "192.168.1.1$i" "02:25:d0:$host_num:01:$byte"
+		rep=enp4s0f0npf0vf$i
+		add_container_ingress_rules $rep
+		add_container_egress_rules $rep "192.168.1.1$i" "02:25:d0:$host_num:01:$byte"
 
 		ns=n1${i}
 		vf=$(ip netns exec $ns ls /sys/class/net | grep en)
