@@ -39,6 +39,7 @@ MAC_ROUTE="24:8a:07:ad:77:01"
 
 for (( i = 1; i <= $n; i ++ )); do
 	rep=${pf}_${i}
+	eval rep=enp4s0f0npf0vf$i
 
 # 	vf=${pf}v$i
 
