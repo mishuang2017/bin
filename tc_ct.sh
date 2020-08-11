@@ -48,11 +48,12 @@ function add_container_ingress_rules()
 	add_ingress_qdisc "$if_name"
 
 	tc filter add dev $if_name ingress prio 1 chain 0 proto ip flower $offload ip_flags nofrag \
-		action ct pipe action goto chain 2 ;
+		action sample rate 2 group 5 trunc 60 \
+		action ct pipe action goto chain 2
 	tc filter add dev $if_name ingress prio 1 chain 2 proto ip flower $offload ip_flags nofrag ct_state +trk+new \
-		action ct commit pipe action goto chain 99;
+		action ct commit pipe action goto chain 99
 	tc filter add dev $if_name ingress prio 1 chain 2 proto ip flower $offload ip_flags nofrag ct_state +trk+est \
-		action goto chain 99;
+		action goto chain 99
 
 	tc filter add dev $if_name ingress prio 1 chain 99 proto ip flower $offload ip_flags nofrag \
 		action mirred egress redirect dev $host_outdev
@@ -81,7 +82,8 @@ function main()
 
 	delete_ingress_qdisc "$host_outdev"
 	for((i=1;i<$((n+1));++i)); do
-		delete_ingress_qdisc "${host_outdev}_${i}"
+		rep=enp4s0f0npf0vf$i
+		delete_ingress_qdisc $rep
 	done
 	add_ingress_qdisc "$host_outdev"
 	add_container_egress_common_rules
