@@ -51,20 +51,20 @@ function add_container_ingress_rules()
 		action sample rate 2 group 5 trunc 60 \
 		action ct pipe action goto chain 2
 	tc filter add dev $if_name ingress prio 1 chain 2 proto ip flower $offload ip_flags nofrag ct_state +trk+new \
-		action ct commit pipe action goto chain 99
+		action ct commit pipe action goto chain 3
 	tc filter add dev $if_name ingress prio 1 chain 2 proto ip flower $offload ip_flags nofrag ct_state +trk+est \
-		action goto chain 99
+		action goto chain 3
 
-	tc filter add dev $if_name ingress prio 1 chain 99 proto ip flower $offload ip_flags nofrag \
+	tc filter add dev $if_name ingress prio 1 chain 3 proto ip flower $offload ip_flags nofrag \
 		action mirred egress redirect dev $host_outdev
 }
 
 function add_container_egress_common_rules()
 {
 	tc filter add dev $host_outdev ingress prio 1 chain 0 proto ip flower $offload ip_flags nofrag \
-		action ct pipe action goto chain 3 ;
-	tc filter add dev $host_outdev ingress prio 1 chain 3 proto ip flower $offload ip_flags nofrag ct_state +trk+est \
-		action ct nat  pipe goto chain 4;
+		action ct pipe action goto chain 4 ;
+	tc filter add dev $host_outdev ingress prio 1 chain 4 proto ip flower $offload ip_flags nofrag ct_state +trk+est \
+		action ct nat  pipe goto chain 5;
 }
 
 function add_container_egress_rules()
@@ -72,7 +72,7 @@ function add_container_egress_rules()
 	if_name="$1"
 	if_addr="$2"
 	if_mac="$3"
-	tc filter add dev $host_outdev ingress prio 1 chain 4 proto ip flower $offload ip_flags nofrag dst_ip $if_addr \
+	tc filter add dev $host_outdev ingress prio 1 chain 5 proto ip flower $offload ip_flags nofrag dst_ip $if_addr \
 		action mirred egress redirect dev $if_name
 }
 

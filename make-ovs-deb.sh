@@ -13,11 +13,11 @@ echo $PRETTY_NAME
 # export PATH="/usr/libexec/python2-sphinx:$PATH"
 
 # config
-# [ -z "$REPO" ] && REPO="file:////images/chrism/ovs"
-# [ -z "$BRANCH" ] && BRANCH=ct-one-table-2.10
+[ -z "$REPO" ] && REPO="file:////images/chrism/ovs"
+[ -z "$BRANCH" ] && BRANCH=ct-one-table-2.10
 
-[ -z "$REPO" ] && REPO="file:////images/chrism/openvswitch"
-[ -z "$BRANCH" ] && BRANCH=ct-one-table-2.13.0
+# [ -z "$REPO" ] && REPO="file:////images/chrism/openvswitch"
+# [ -z "$BRANCH" ] && BRANCH=ct-one-table-2.13.0
 
 [ -z $TMPDIR ] && TMPDIR="/tmp/tmp$$-ovs"
 

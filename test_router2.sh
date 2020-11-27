@@ -3,6 +3,7 @@ set -x
 
 link=enp4s0f0
 rep=enp4s0f0_1
+vf=enp4s0f0v1
 br=br
 
 ovs-vsctl del-br $br
@@ -12,12 +13,12 @@ ovs-vsctl add-br $br
 ovs-vsctl add-port $br $link
 ovs-vsctl add-port $br $rep
 
-ip netns exec n11 ifconfig enp4s0f3 192.168.0.2/24 up
-ip netns exec n11 ip route add 8.9.10.0/24 via 192.168.0.1 dev enp4s0f3
+ip netns exec n11 ifconfig $vf 192.168.0.2/24 up
+ip netns exec n11 ip route add 8.9.10.0/24 via 192.168.0.1 dev $vf
 
-MAC1=$(ip netns exec n11 cat /sys/class/net/enp4s0f3/address)
-[[ $(hostname -s) == "dev-r630-03" ]] && MAC2=24:8a:07:88:27:ca
-[[ $(hostname -s) == "dev-r630-04" ]] && MAC2=24:8a:07:88:27:9a
+MAC1=$(ip netns exec n11 cat /sys/class/net/$vf/address)
+[[ $(hostname -s) == "dev-r630-03" ]] && MAC2=b8:59:9f:bb:31:82
+[[ $(hostname -s) == "dev-r630-04" ]] && MAC2=b8:59:9f:bb:31:66
 
 #define ARPOP_REQUEST   1               /* ARP request                  */
 #define ARPOP_REPLY     2               /* ARP reply                    */

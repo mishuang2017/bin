@@ -20,8 +20,11 @@ export PATH="/usr/libexec/python2-sphinx:$PATH"
 # [ -z "$REPO" ] && REPO="file:///images/chrism/ovs-roi"
 # [ -z "$BRANCH" ] && BRANCH=${1:-master}
 
-[ -z "$REPO" ] && REPO="file:///images/chrism/ovs_2.13"
-[ -z "$BRANCH" ] && BRANCH=${1:-2.13.0-ct}
+# [ -z "$REPO" ] && REPO="file:///images/chrism/ovs_2.13"
+# [ -z "$BRANCH" ] && BRANCH=${1:-2.13.0-ct}
+
+[ -z "$REPO" ] && REPO="file:///images/chrism/ovs"
+[ -z "$BRANCH" ] && BRANCH=${1:-ct-one-table-2.10}
 
 SPEC="./rhel/openvswitch-fedora.spec"
 [ -z $TMPDIR ] && TMPDIR="/tmp/tmp$$-ovs"
