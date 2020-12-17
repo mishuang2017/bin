@@ -13,11 +13,11 @@ BR_INT=br-int
 BR_EX=br-ex
 
 if [[ $(hostname -s) == "dev-r630-03" ]]; then
-	MAC_REMOTE_PF=24:8a:07:88:27:ca
+	MAC_REMOTE_PF=b8:59:9f:bb:31:82
 	host_num=13
 	remote_host_num=14
 elif [[ $(hostname -s) == "dev-r630-04" ]]; then
-	MAC_REMOTE_PF=24:8a:07:88:27:9a
+	MAC_REMOTE_PF=b8:59:9f:bb:31:66
 	host_num=14
 	remote_host_num=13
 fi

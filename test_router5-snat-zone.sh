@@ -2,10 +2,10 @@
 
 set -x
 
-pf=enp59s0f0
-rep=enp59s0f0_1
+pf=enp4s0f0
+rep=enp4s0f0_1
 br=br
-vf=enp59s0f3
+vf=enp4s0f0v1
 
 systemctl start openvswitch.service
 ovs-vsctl list-br | xargs -r -l ovs-vsctl del-br
@@ -17,9 +17,8 @@ ip netns exec n11 ifconfig $vf 192.168.0.2/24 up
 ip netns exec n11 ip route add 8.9.10.0/24 via 192.168.0.1 dev $vf
 
 VF_MAC=$(ip netns exec n11 cat /sys/class/net/$vf/address)
-# [[ $(hostname -s) == "dev-r630-03" ]] && REMOTE_PF_MAC=24:8a:07:88:27:ca
-# [[ $(hostname -s) == "dev-r630-04" ]] && REMOTE_PF_MAC=24:8a:07:88:27:9a
-REMOTE_PF_MAC=ec:0d:9a:38:e4:0a
+[[ $(hostname -s) == "dev-r630-03" ]] && REMOTE_PF_MAC=b8:59:9f:bb:31:82
+[[ $(hostname -s) == "dev-r630-04" ]] && REMOTE_PF_MAC=b8:59:9f:bb:31:66
 
 #define ARPOP_REQUEST   1               /* ARP request                  */
 #define ARPOP_REPLY     2               /* ARP reply                    */
