@@ -4,7 +4,7 @@ set -x
 
 PF=enp4s0f0
 REMOTE_PF=enp4s0f0
-VF=enp4s0f3
+VF=enp4s0f0v1
 REP=enp4s0f0_1
 
 PATCH_EX=patch-ex
