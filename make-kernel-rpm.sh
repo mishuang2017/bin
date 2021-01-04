@@ -12,22 +12,9 @@ if [ ! -e /usr/bin/rpmbuild ]; then
     exit 1
 fi
 
-# config
-# [ -z "$REPO" ] && REPO="/images/chrism/linux"
-# [ -z "$BRANCH" ] && BRANCH='4.19'
-
-[ -z "$REPO" ] && REPO="/images/chrism/5.4-ct-rpm"
-[ -z "$BRANCH" ] && BRANCH='5.4-ct'
-
-if [ "$DEBUG" == "1" ]; then
-    CONFIG=/labhome/roid/scripts/ovs/.config_debug
-else
-    CONFIG=/labhome/roid/scripts/ovs/.config
-fi
-# CONFIG=/labhome/chrism/roi.config
-# CONFIG=/labhome/chrism/roi.config.debug
-# CONFIG=/images/chrism/linux/.config
-CONFIG=/labhome/chrism/sm/config/config-5.4.19-100.fc30.x86_64
+REPO=/images/chrism/linux-4.19-rtnl-removal
+BRANCH=4.19-bd-rtnl-removal
+CONFIG=/labhome/chrism/bd-kernel.config.vm
 [ -z $TMPDIR ] && TMPDIR="/tmp/tmp$$-kernel"
 
 # check for free space
@@ -37,11 +24,6 @@ if (( free < need )); then
     echo "Please check for free space in /tmp"
     exit 1
 fi
-
-#if [ "$1" = "linus" ]; then
-#    REPO="git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git"
-#    BRANCH="master"
-#fi
 
 if [ ! -e $CONFIG ]; then
     echo "Cannot read $CONFIG"
