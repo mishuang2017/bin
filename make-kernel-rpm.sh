@@ -12,9 +12,9 @@ if [ ! -e /usr/bin/rpmbuild ]; then
     exit 1
 fi
 
-REPO=/images/chrism/linux-4.19-rtnl-removal
+REPO=/images/cmi/linux-4.19-rtnl-removal
 BRANCH=4.19-bd-rtnl-removal
-CONFIG=/labhome/chrism/bd-kernel.config.vm
+CONFIG=/labhome/cmi/bd-kernel.config.vm
 [ -z $TMPDIR ] && TMPDIR="/tmp/tmp$$-kernel"
 
 # check for free space
