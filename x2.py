@@ -1,7 +1,8 @@
-#!/usr/bin/python3
+#!/usr/bin/python2.7
 
 import re
 import sys
+import string
 
 if len(sys.argv) == 1:
 	exit()
@@ -9,11 +10,11 @@ if len(sys.argv) == 1:
 argv1 = sys.argv[1]
 
 if re.match('^(0x|0X)', argv1) or re.search('([a-fA-F]+)', argv1):
-        i = int(argv1, base=16)
+        i = string.atoi(argv1, base=16)
 elif re.match('^\d+$', argv1):
-        i = int(argv1, base=10)
+        i = string.atoi(argv1, base=10)
 else:
-        print("Error input!")
+        print "Error input!"
         exit()
 
 r=''
@@ -27,6 +28,6 @@ while n:
 
         n >>= 1
 
-print('0x%x = %d = %.2fK =' % (i, i, i / 1024.0), end=' ')
-print('%.2fM = %.2fG' % (i / 1024.0 ** 2.0, i / 1024.0 ** 3.0))
-print(r)
+print '0x%x = %d = %.2fK =' % (i, i, i / 1024.0),
+print '%.2fM = %.2fG' % (i / 1024.0 ** 2.0, i / 1024.0 ** 3.0)
+print r
