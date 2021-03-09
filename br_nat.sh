@@ -2,18 +2,24 @@
 
 set -x
 
-pf=ens1f0
 br=br
+
+# [[ $(hostname -s) == "dev-r630-03" ]] && REMOTE_PF_MAC=24:8a:07:88:27:ca
+# [[ $(hostname -s) == "dev-r630-04" ]] && REMOTE_PF_MAC=24:8a:07:88:27:9a
+if [[ $(hostname -s) == "c-235-13-1-008" ]]; then
+	pf=enp8s0f0
+	REMOTE_PF_MAC=04:3f:72:d2:af:62
+fi
+
+if [[ -z $pf ]]; then
+	echo "please specify REMOTE_PF_MAC"
+	exit
+fi
 
 systemctl start openvswitch.service
 ovs-vsctl list-br | xargs -r -l ovs-vsctl del-br
 ovs-vsctl add-br $br
 ovs-vsctl add-port $br $pf 
-
-
-# [[ $(hostname -s) == "dev-r630-03" ]] && REMOTE_PF_MAC=24:8a:07:88:27:ca
-# [[ $(hostname -s) == "dev-r630-04" ]] && REMOTE_PF_MAC=24:8a:07:88:27:9a
-REMOTE_PF_MAC=98:03:9b:13:f4:48
 
 #define ARPOP_REQUEST   1               /* ARP request                  */
 #define ARPOP_REPLY     2               /* ARP reply                    */
@@ -26,16 +32,17 @@ MAC_ROUTE="24:8a:07:ad:77:99"
 # TPA: target protocol address
 # THA: target hardware address
 
-for i in {1..48}; do
-	rep=ens1f0_$i
+for i in {1..1}; do
+	rep=${pf}_$i
 
 # 	vf=ens1f$((i+2))
 	ns=n1$i
-	vf=$(ip netns exe $ns ls /sys/class/net | head -1)
+	vf=$(ip netns exe $ns ls /sys/class/net/ | grep enp | head -1)
 
 	reg6=$i
 	ovs-vsctl add-port $br $rep
 	VF_MAC=$(ip netns exec $ns cat /sys/class/net/$vf/address)
+	echo "VF_MAC=$VF_MAC"
 	ip netns exec $ns ifconfig $vf 192.168.0.$reg6/24 up
 	ip netns exec $ns ip route add 8.9.10.0/24 via 192.168.0.254 dev $vf
 
