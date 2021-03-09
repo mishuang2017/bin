@@ -16,6 +16,12 @@ if [[ $(hostname -s) == "dev-r630-04" ]]; then
 	host_outdev=enp4s0f0np0
 fi
 
+if [[ $(hostname -s) == "c-235-13-1-008" ]]; then
+	gateway_mac=04:3f:72:d2:af:62
+	host_num=8
+	host_outdev=enp8s0f0
+fi
+
 enable_skip_hw=0
 protos="tcp"
 protos="tcp icmp"
@@ -107,7 +113,7 @@ function main()
 
 	for((i=1;i<$((n+1));++i)); do
 		byte=`printf "%02x" $((i+1))`
-		rep=enp4s0f0npf0vf$i
+		rep=${host_outdev}_$i
 		add_container_ingress_rules $rep
 		add_container_egress_rules $rep "192.168.1.1$i" "02:25:d0:$host_num:01:$byte"
 
