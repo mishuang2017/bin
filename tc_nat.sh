@@ -16,9 +16,9 @@ if [[ $(hostname -s) == "dev-r630-04" ]]; then
 	host_outdev=enp4s0f0np0
 fi
 
-if [[ $(hostname -s) == "c-141-18-1-009" ]]; then
-	gateway_mac=0c:42:a1:60:62:9c
-	host_num=9
+if [[ $(hostname -s) == "c-235-14-1-007" ]]; then
+	gateway_mac=0c:42:a1:60:62:78
+	host_num=7
 	host_outdev=enp8s0f0
 fi
 
@@ -70,8 +70,8 @@ function add_container_ingress_rules()
 	delete_ingress_qdisc "$if_name"
 	add_ingress_qdisc "$if_name"
 
-#                 action sample rate $rate group 5 trunc 60 \
 	tc filter add dev $if_name ingress prio 1 chain 0 proto ip flower $SKIP_HW ip_flags nofrag ct_state -trk \
+		action sample rate $rate group 5 trunc 60 \
 		action ct nat pipe action goto chain 2 ;
 	tc filter add dev $if_name ingress prio 1 chain 2 proto ip flower $SKIP_HW ip_flags nofrag ct_state +trk+new \
 		action ct commit nat src addr $host_ip port $port_range pipe action goto chain 99;
@@ -85,9 +85,9 @@ function add_container_ingress_rules()
 function add_container_egress_common_rules()
 {
 	rate=1
-#                 action sample rate $rate group 6 trunc 60 \
 	tc filter add dev $host_outdev ingress prio 1 chain 0 proto ip flower $SKIP_HW ip_flags nofrag ct_state -trk \
-		action ct pipe action goto chain 3 ;
+                action sample rate $rate group 6 trunc 60 \
+		action ct nat pipe action goto chain 3 ;
 	tc filter add dev $host_outdev ingress prio 1 chain 3 proto ip flower $SKIP_HW ip_flags nofrag ct_state +trk+est \
 		action ct nat  pipe goto chain 4;
 }
