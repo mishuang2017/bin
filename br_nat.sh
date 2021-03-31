@@ -6,9 +6,9 @@ br=br
 
 # [[ $(hostname -s) == "dev-r630-03" ]] && REMOTE_PF_MAC=24:8a:07:88:27:ca
 # [[ $(hostname -s) == "dev-r630-04" ]] && REMOTE_PF_MAC=24:8a:07:88:27:9a
-if [[ $(hostname -s) == "c-141-18-1-009" ]]; then
+if [[ $(hostname -s) == "c-236-147-240-241" ]]; then
 	pf=enp8s0f0
-	REMOTE_PF_MAC=0c:42:a1:60:62:9c
+	REMOTE_PF_MAC=0c:42:a1:a9:83:f2
 fi
 
 if [[ -z $pf ]]; then

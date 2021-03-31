@@ -16,9 +16,9 @@ if [[ $(hostname -s) == "dev-r630-04" ]]; then
 	host_outdev=enp4s0f0np0
 fi
 
-if [[ $(hostname -s) == "c-235-14-1-007" ]]; then
-	gateway_mac=0c:42:a1:60:62:78
-	host_num=7
+if [[ $(hostname -s) == "c-236-147-240-241" ]]; then
+	gateway_mac=0c:42:a1:a9:83:f2
+	host_num=41
 	host_outdev=enp8s0f0
 fi
 
