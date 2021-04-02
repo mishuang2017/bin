@@ -23,10 +23,15 @@ ovs-ofctl add-flow $br -O openflow13 "table=10, priority=100,ip,ct_state=-new-es
 ovs-ofctl add-flow $br -O openflow13 "table=10, priority=100,ip,ct_state=-new-est-rel-inv-trk actions=drop"
 ovs-ofctl add-flow $br -O openflow13 "table=10, priority=100,ip,ct_state=+new-rel-inv+trk actions= ct(commit,table=15,zone=$ZONE)"
 
-ovs-ofctl add-flow $br -O openflow13 "priority=100 table=15,ip, in_port=$VM1_PORT, action=set_field:0x64->tun_id,set_field:$VXLAN_PORT->reg7,goto_table:20"
-ovs-ofctl add-flow $br -O openflow13 "priority=100 table=15,ip, in_port=$VXLAN_PORT, actions=goto_table:20"
+ovs-ofctl add-flow $br -O openflow13 "table=15, priority=100,ip,ct_state=+trk actions=goto_table:25"
+ovs-ofctl add-flow $br -O openflow13 "table=15, priority=100,ip,ct_state=+trk actions=drop"
+ovs-ofctl add-flow $br -O openflow13 "table=15, priority=100,ip,ct_state=-trk actions=drop"
+ovs-ofctl add-flow $br -O openflow13 "table=15, priority=100,ip,ct_state=+trk actions=ct(commit,table=25,zone=100)"
 
-ovs-ofctl add-flow $br -O openflow13 "table=20, priority=100, ip,action=output:NXM_NX_REG7[0..15]"
+ovs-ofctl add-flow $br -O openflow13 "priority=100 table=25,ip, in_port=$VM1_PORT, action=set_field:0x64->tun_id,set_field:$VXLAN_PORT->reg7,goto_table:40"
+ovs-ofctl add-flow $br -O openflow13 "priority=100 table=25,ip, in_port=$VXLAN_PORT, actions=goto_table:40"
+
+ovs-ofctl add-flow $br -O openflow13 "table=40, priority=100, ip,action=output:NXM_NX_REG7[0..15]"
 ovs-ofctl add-flow $br -O openflow13 "table=200, priority=100,action=drop"
 
 set +x
