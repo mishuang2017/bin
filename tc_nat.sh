@@ -16,9 +16,10 @@ if [[ $(hostname -s) == "dev-r630-04" ]]; then
 	host_outdev=enp4s0f0np0
 fi
 
-if [[ $(hostname -s) == "c-141-18-1-005" ]]; then
-	gateway_mac=0c:42:a1:60:62:ac
-	host_num=5
+# don't forget change host_num
+if [[ $(hostname -s) == "c-235-253-1-007" ]]; then
+	gateway_mac=0c:42:a1:58:ac:64
+	host_num=7
 	host_outdev=enp8s0f0
 fi
 
