@@ -21,6 +21,14 @@ vx=vxlan1
 vni=4
 vxlan_port=4789
 vxlan_mac=24:25:d0:e1:00:00
+vxlan_ip=1.1.1.200
+
+ifconfig $link 0
+ifconfig $link2 0
+ifconfig $link $link_ip/16 up
+ifconfig $link2 $link_remote_ip/16 up
+arp -i $link -s $link_remote_ip $link2_mac
+ip netns exe $ns arp -i enp4s0f0v1 -s $vxlan_ip $vxlan_mac
 
 ifconfig $link 0
 ifconfig $link2 0
