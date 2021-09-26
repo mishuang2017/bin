@@ -2,7 +2,10 @@
 
 ####### remove change-id and issue ########
 
-git send-email --dry-run /labhome/cmi/ovs/14_1/* --to=dev@openvswitch.org --cc=echaudro@redhat.com --cc=i.maximets@ovn.org --cc=simon.horman@netronome.com \
+git send-email --dry-run /labhome/cmi/ovs/15_1/* --to=dev@openvswitch.org --cc=echaudro@redhat.com --cc=i.maximets@ovn.org --cc=simon.horman@netronome.com \
+    --cc=elibr@nvidia.com --cc=roniba@nvidia.com  --cc=roid@nvidia.com
+
+git send-email --dry-run /labhome/cmi/ovs/test/0001-system-offloads-traffic.at-Add-sFlow-offload-test-ca.patch --to=dev@openvswitch.org --cc=echaudro@redhat.com --cc=i.maximets@ovn.org --cc=simon.horman@netronome.com \
     --cc=elibr@nvidia.com --cc=roniba@nvidia.com  --cc=roid@nvidia.com
 
 git send-email --dry-run /labhome/cmi/sflow/saeed/0002-net-psample-Introduce-stubs-to-remove-NIC-driver-dep.patch --to=NBU-linux-internal@nvidia.com -cc=jiri@nvidia.com --cc=saeedm@nvidia.com
