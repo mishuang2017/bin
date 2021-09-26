@@ -28,13 +28,6 @@ ifconfig $link2 0
 ifconfig $link $link_ip/16 up
 ifconfig $link2 $link_remote_ip/16 up
 arp -i $link -s $link_remote_ip $link2_mac
-ip netns exe $ns arp -i enp4s0f0v1 -s $vxlan_ip $vxlan_mac
-
-ifconfig $link 0
-ifconfig $link2 0
-ifconfig $link $link_ip/16 up
-ifconfig $link2 $link_remote_ip/16 up
-arp -i $link -s $link_remote_ip $link2_mac
 ip netns exe $ns arp -i enp4s0f0v1 -s 1.1.1.200 $vxlan_mac
 
 ip link del $vx > /dev/null 2>&1
