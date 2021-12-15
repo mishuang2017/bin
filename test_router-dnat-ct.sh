@@ -2,31 +2,51 @@
 
 set -x
 
-PF=enp4s0f0
-REMOTE_PF=enp4s0f0
-VF=enp4s0f3
-VF2=enp4s0f4
-REP=enp4s0f0_1
-REP2=enp4s0f0_2
-
 PATCH_EX=patch-ex
 PATCH_INT=patch-int
 BR_INT=br-int
 BR_EX=br-ex
 
-VF_MAC=$(ip netns exec n11 cat /sys/class/net/$VF/address)
-VF2_MAC=$(ip netns exec n12 cat /sys/class/net/$VF2/address)
 VM_IP=192.168.0.2
 VM_ROUTE_IP=192.168.0.1
 VM_ROUTE_IP_HEX=0xc0a80001
 
 if [[ $(hostname -s) == "dev-r630-03" ]]; then
-	MAC_REMOTE_PF=24:8a:07:88:27:ca
+
+	PF=enp4s0f0
+	REMOTE_PF=enp4s0f0
+	VF=enp4s0f3
+	VF2=enp4s0f4
+	REP=enp4s0f0_1
+	REP2=enp4s0f0_2
+
+	MAC_REMOTE_PF=b8:59:9f:bb:31:82
 	REMOTE_HOST=10.112.205.14
 elif [[ $(hostname -s) == "dev-r630-04" ]]; then
-	MAC_REMOTE_PF=24:8a:07:88:27:9a
+
+	PF=enp4s0f0
+	REMOTE_PF=enp4s0f0
+	VF=enp4s0f3
+	VF2=enp4s0f4
+	REP=enp4s0f0_1
+	REP2=enp4s0f0_2
+
+	MAC_REMOTE_PF=b8:59:9f:bb:31:66
 	REMOTE_HOST=10.112.205.13
+elif [[ $(hostname -s) == "c-237-155-20-023" ]]; then
+
+	PF=enp8s0f0
+	REMOTE_PF=enp8s0f0
+	VF=enp8s0f3
+	VF2=enp8s0f4
+	REP=enp8s0f0_1
+	REP2=enp8s0f0_2
+
+	MAC_REMOTE_PF=b8:ce:f6:82:d5:5c
+	REMOTE_HOST=10.237.155.24
 fi
+VF_MAC=$(ip netns exec n11 cat /sys/class/net/$VF/address)
+VF2_MAC=$(ip netns exec n12 cat /sys/class/net/$VF2/address)
 REMOTE_PF_IP=8.9.10.11
 ifconfig $PF 0
 ssh $REMOTE_HOST ifconfig $REMOTE_PF $REMOTE_PF_IP/24 up
