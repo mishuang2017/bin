@@ -15,24 +15,24 @@ if [[ $(hostname -s) == "dev-r630-03" ]]; then
 
 	PF=enp4s0f0
 	REMOTE_PF=enp4s0f0
-	VF=enp4s0f3
-	VF2=enp4s0f4
+	VF=enp4s0f0v1
+	VF2=enp4s0f0v2
 	REP=enp4s0f0_1
 	REP2=enp4s0f0_2
 
 	MAC_REMOTE_PF=b8:59:9f:bb:31:82
-	REMOTE_HOST=10.112.205.14
+	REMOTE_HOST=10.75.205.14
 elif [[ $(hostname -s) == "dev-r630-04" ]]; then
 
 	PF=enp4s0f0
 	REMOTE_PF=enp4s0f0
-	VF=enp4s0f3
-	VF2=enp4s0f4
+	VF=enp4s0f0v1
+	VF2=enp4s0f0v2
 	REP=enp4s0f0_1
 	REP2=enp4s0f0_2
 
 	MAC_REMOTE_PF=b8:59:9f:bb:31:66
-	REMOTE_HOST=10.112.205.13
+	REMOTE_HOST=10.75.205.13
 elif [[ $(hostname -s) == "c-237-155-20-023" ]]; then
 
 	PF=enp8s0f0
