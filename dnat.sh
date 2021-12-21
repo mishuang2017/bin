@@ -55,8 +55,11 @@ else
 	ovs-ofctl add-flow $br "table=0, in_port=$pf, dl_type=0x0806, nw_dst=8.9.10.1, actions=load:0x2->NXM_OF_ARP_OP[], move:NXM_OF_ETH_SRC[]->NXM_OF_ETH_DST[], mod_dl_src:${MAC_ROUTE}, move:NXM_NX_ARP_SHA[]->NXM_NX_ARP_THA[], move:NXM_OF_ARP_SPA[]->NXM_OF_ARP_TPA[], load:0x248a07ad7799->NXM_NX_ARP_SHA[], load:0x08090a01->NXM_OF_ARP_SPA[], in_port"
 fi
 
-ovs-ofctl add-flow $br "table=0,priority=10,in_port=$pf,tcp,tp_dst=9999,nw_dst=8.9.10.1 actions=mod_nw_dst:192.168.0.2,mod_tp_dst:5001,mod_dl_dst=$VF_MAC,ct(commit),dec_ttl,$rep"
-ovs-ofctl add-flow $br "table=0,priority=10,in_port=$rep,tcp,nw_src=192.168.0.2,tp_src=5001 actions=mod_nw_src:8.9.10.1,mod_tp_src:9999,mod_dl_dst=$REMOTE_PF_MAC,$pf"
+port=4000
+
+ovs-ofctl add-flow $br "table=0,priority=10,in_port=$pf,tcp,tp_dst=9999,nw_dst=8.9.10.1 actions=mod_nw_dst:192.168.0.2,mod_tp_dst:$port,mod_dl_dst=$VF_MAC,ct(commit),dec_ttl,$rep"
+# ovs-ofctl add-flow $br "table=0,priority=10,in_port=$pf,tcp,tp_dst=9999,nw_dst=8.9.10.1 actions=mod_nw_dst:192.168.0.2,mod_tp_dst:$port,mod_dl_dst=$VF_MAC,dec_ttl,$rep"
+ovs-ofctl add-flow $br "table=0,priority=10,in_port=$rep,tcp,nw_src=192.168.0.2,tp_src=$port actions=mod_nw_src:8.9.10.1,mod_tp_src:9999,mod_dl_dst=$REMOTE_PF_MAC,$pf"
 
 # iperf -c 8.9.10.1 -p 9999
 
