@@ -12,18 +12,18 @@ if [ ! -e /usr/bin/rpmbuild ]; then
     exit 1
 fi
 
-REPO=/images/cmi/linux-4.19-rtnl-removal
-BRANCH=4.19-bd-rtnl-removal
-CONFIG=/labhome/cmi/bd-kernel.config.vm
-[ -z $TMPDIR ] && TMPDIR="/tmp/tmp$$-kernel"
+REPO=/images/cmi/linux
+BRANCH=eswitch
+CONFIG=/labhome/cmi/mi/config.cloud
+[ -z $TMPDIR ] && TMPDIR="/workspace/kernel"
 
 # check for free space
-free=`df  /tmp | tail -1 | awk {'print $4'}`
-((need=15*1024*1024))
-if (( free < need )); then
-    echo "Please check for free space in /tmp"
-    exit 1
-fi
+# free=`df  /tmp | tail -1 | awk {'print $4'}`
+# ((need=15*1024*1024))
+# if (( free < need )); then
+#     echo "Please check for free space in /tmp"
+#     exit 1
+# fi
 
 if [ ! -e $CONFIG ]; then
     echo "Cannot read $CONFIG"
