@@ -28,14 +28,13 @@ alias $num1='ssh root@$host1'
 alias $num2='ssh root@$host2'
 EOF
 
-[[ -z $password ]] && exit
-
 sshpass -p $password ssh-copy-id  -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa.pub root@$host1
 sshpass -p $password ssh-copy-id  -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa.pub root@$host2
 
 set -x
 for host in $host1 $host2; do
-	ssh root@$host "mkdir -p /images/cmi; \
+	ssh root@$host "if [[ ! -d /images/cmi ]]; then
+		mkdir -p /images/cmi; \
 		chown cmi.mtl /images/cmi; \
 		ln -s /labhome/cmi/mi /images/cmi; \
 		mv /root/.bashrc bashrc.orig; \
@@ -44,6 +43,7 @@ for host in $host1 $host2; do
 		ln -s /labhome/cmi/.vimrc /root; \
 		ln -s /labhome/cmi/.vim /root; \
 		/bin/cp /labhome/cmi/.crash /root; \
-		yum install -y tmux"
-	done
+		yum install -y tmux; \
+		fi "
+done
 set +x
