@@ -5,6 +5,7 @@ hosts=$1
 password=$2
 
 [[ -z $hosts ]] && exit
+[[ -z $password ]] && exit
 
 host1=${hosts/-*/}
 echo host1=$host1
