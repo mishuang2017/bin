@@ -43,7 +43,7 @@ for host in $host1 $host2; do
 		ln -s /labhome/cmi/.vimrc /root; \
 		ln -s /labhome/cmi/.vim /root; \
 		/bin/cp /labhome/cmi/.crash /root; \
-		yum install -y tmux ctags, kexec-tools; \
+		yum install -y tmux ctags kexec-tools; \
 		fi "
 done
 set +x
