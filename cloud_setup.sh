@@ -21,10 +21,12 @@ host2=$host0$num2
 echo host2=$host2
 echo num2=$num2
 
-sed -i "/alias $num1=/d" ~/.bashrc
-sed -i "/alias $num2=/d" ~/.bashrc
+file=~cmi/mi/cloud_alias
 
-cat << EOF >> ~/.bashrc
+sed -i "/alias $num1=/d" $file
+sed -i "/alias $num2=/d" $file
+
+cat << EOF >> $file
 alias $num1='ssh root@$host1'
 alias $num2='ssh root@$host2'
 EOF
@@ -43,7 +45,7 @@ for host in $host1 $host2; do
 		ln -s /labhome/cmi/.vimrc /root; \
 		ln -s /labhome/cmi/.vim /root; \
 		/bin/cp /labhome/cmi/.crash /root; \
-		yum install -y tmux ctags kexec-tools; \
+		test -f /bin/tmux || yum install -y tmux ctags kexec-tools; \
 		fi "
 done
 set +x
