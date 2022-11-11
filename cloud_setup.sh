@@ -27,8 +27,8 @@ sed -i "/alias $num1=/d" $file
 sed -i "/alias $num2=/d" $file
 
 cat << EOF >> $file
-alias $num1='ssh root@$host1'
-alias $num2='ssh root@$host2'
+alias $num1='ssh cmi@$host1'
+alias $num2='ssh cmi@$host2'
 EOF
 
 set -x
