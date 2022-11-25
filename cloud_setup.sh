@@ -7,29 +7,43 @@ password=$2
 [[ -z $hosts ]] && exit
 [[ -z $password ]] && exit
 
-host1=${hosts/-*/}
-echo host1=$host1
-num1=${host1/*./}
-echo num1=$num1
-
-host0=$(echo $hosts | sed 's/\.[^.]*$/./')
-echo host0=$host0
-
-num2=${hosts/*-/}
-num2=${num2/_*/}
-host2=$host0$num2
-echo host2=$host2
-echo num2=$num2
-
 file=~cmi/mi/cloud_alias
 
-sed -i "/alias $num1=/d" $file
-sed -i "/alias $num2=/d" $file
+echo $hosts | grep "-"
+if [[ $? == 0 ]]; then
+	host1=${hosts/-*/}
+	echo host1=$host1
+	num1=${host1/*./}
+	echo num1=$num1
 
-cat << EOF >> $file
-alias $num1='ssh cmi@$host1'
-alias $num2='ssh cmi@$host2'
+	host0=$(echo $hosts | sed 's/\.[^.]*$/./')
+	echo host0=$host0
+
+	num2=${hosts/*-/}
+	num2=${num2/_*/}
+	host2=$host0$num2
+	echo host2=$host2
+	echo num2=$num2
+
+	sed -i "/alias $num1=/d" $file
+	sed -i "/alias $num2=/d" $file
+
+	cat << EOF >> $file
+alias $num1='ssh root@$host1'
+alias $num2='ssh root@$host2'
 EOF
+
+else
+	host1=${hosts/_*/}
+	num1=${host1/*./}
+	echo "host1=$host1"
+	echo "num1=$num1"
+	host2=""
+
+	cat << EOF >> $file
+alias $num1='ssh root@$host1'
+EOF
+fi
 
 set -x
 for host in $host1 $host2; do
