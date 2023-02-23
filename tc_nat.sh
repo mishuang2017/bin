@@ -17,9 +17,9 @@ if [[ $(hostname -s) == "dev-r630-04" ]]; then
 fi
 
 # don't forget change host_num
-if [[ $(hostname -s) == "c-235-253-1-007" ]]; then
-	gateway_mac=0c:42:a1:58:ac:64
-	host_num=7
+if [[ $(hostname -s) == "c-236-0-240-243" ]]; then
+	gateway_mac=0c:42:a1:d1:d1:80
+	host_num=43
 	host_outdev=enp8s0f0
 fi
 
@@ -117,7 +117,12 @@ function main()
 		add_container_egress_rules $rep "192.168.1.1$i" "02:25:d0:$host_num:01:$byte"
 
 		ns=n1${i}
-		vf=$(ip netns exec $ns ls /sys/class/net | grep en)
+		grep "Red Hat" /etc/redhat-release
+		if (( $? == 0 )); then
+			vf=$(ip netns exec $ns ls /sys/class/net | grep en)
+		else
+			vf=$(ip netns exec $ns ls /sys/class/net | grep eth)
+		fi
 		VF_MAC=$(ip netns exec $ns cat /sys/class/net/$vf/address)
 		echo $VF_MAC
 		ip netns exec $ns ifconfig $vf 192.168.1.1${i}/24 up
