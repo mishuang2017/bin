@@ -2,8 +2,8 @@
 
 ####### remove change-id and issue ########
 
-git send-email --dry-run /labhome/cmi/ovs/v22/* --to=dev@openvswitch.org --cc=i.maximets@ovn.org --cc=echaudro@redhat.com --cc=simon.horman@netronome.com \
-    --cc=konguyen@redhat.com --cc=mleitner@redhat.com --cc=elibr@nvidia.com --cc=roniba@nvidia.com --cc=roid@nvidia.com --cc=majd@nvidia.com
+git send-email --dry-run /labhome/cmi/ovs/v26/* --to=dev@openvswitch.org --cc=i.maximets@ovn.org --cc=echaudro@redhat.com --cc=simon.horman@corigine.com \
+    --cc=konguyen@redhat.com --cc=mleitner@redhat.com --cc=elibr@nvidia.com --cc=roniba@nvidia.com --cc=roid@nvidia.com --cc=majd@nvidia.com --cc=maord@nvidia.com
 
 git send-email --dry-run /labhome/cmi/ovs/test/0001-system-offloads-traffic.at-Add-sFlow-offload-test-ca.patch --to=dev@openvswitch.org --cc=echaudro@redhat.com --cc=i.maximets@ovn.org --cc=simon.horman@netronome.com \
     --cc=elibr@nvidia.com --cc=roniba@nvidia.com  --cc=roid@nvidia.com
