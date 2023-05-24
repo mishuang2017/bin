@@ -13,14 +13,15 @@ fi
 if [[ $(hostname -s) == "dev-r630-04" ]]; then
 	gateway_mac="b8:59:9f:bb:31:66"
 	host_num=14
-	host_outdev=enp4s0f0np0
+	host_outdev=enp4s0f0
 fi
 
 # don't forget change host_num
-if [[ $(hostname -s) == "c-236-0-240-243" ]]; then
-	gateway_mac=0c:42:a1:d1:d1:80
-	host_num=43
-	host_outdev=enp8s0f0
+# configure remote pf ip 8.9.10.11/24
+if [[ $(hostname -s) == "c-234-183-60-063" ]]; then
+	gateway_mac=e8:eb:d3:98:20:5c	# remote pf mac
+	host_num=63			# local host_num
+	host_outdev=enp8s0f0		# local pf
 fi
 
 enable_skip_hw=0
