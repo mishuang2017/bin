@@ -18,8 +18,8 @@ fi
 
 # don't forget change host_num
 # configure remote pf ip 8.9.10.11/24
-if [[ $(hostname -s) == "c-234-183-60-063" ]]; then
-	gateway_mac=e8:eb:d3:98:20:5c	# remote pf mac
+if [[ $(hostname -s) == "c-237-115-160-163" ]]; then
+	gateway_mac=e8:eb:d3:98:24:ac	# remote pf mac
 	host_num=63			# local host_num
 	host_outdev=enp8s0f0		# local pf
 fi

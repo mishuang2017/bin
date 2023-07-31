@@ -12,18 +12,27 @@ PATCH_INT=patch-int
 BR_INT=br-int
 BR_EX=br-ex
 
-VF_MAC=$(ip netns exec n11 cat /sys/class/net/$VF/address)
-VM_IP=192.168.0.2
-VM_ROUTE_IP=192.168.0.1
-VM_ROUTE_IP_HEX=0xc0a80001
-
 if [[ $(hostname -s) == "dev-r630-03" ]]; then
 	MAC_REMOTE_PF=b8:59:9f:bb:31:82
 	REMOTE_HOST=10.75.205.14
 elif [[ $(hostname -s) == "dev-r630-04" ]]; then
 	MAC_REMOTE_PF=b8:59:9f:bb:31:66
 	REMOTE_HOST=10.75.205.13
+elif [[ $(hostname -s) == "c-237-115-160-163" ]]; then
+	MAC_REMOTE_PF=e8:eb:d3:98:24:ac
+	REMOTE_HOST=10.237.115.164
+	PF=enp8s0f0
+	REMOTE_PF=enp8s0f0
+	VF=eth3
+	REP=enp8s0f0_1
 fi
+
+VF_MAC=$(ip netns exec n11 cat /sys/class/net/$VF/address)
+VM_IP=192.168.0.2
+VM_ROUTE_IP=192.168.0.1
+VM_ROUTE_IP_HEX=0xc0a80001
+
+
 REMOTE_PF_IP=8.9.10.11
 ifconfig $PF 0
 ssh $REMOTE_HOST ifconfig $REMOTE_PF $REMOTE_PF_IP/24 up
