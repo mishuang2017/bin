@@ -59,7 +59,8 @@ for host in $host1 $host2; do
 		ln -s /labhome/cmi/.vimrc /root; \
 		ln -s /labhome/cmi/.vim /root; \
 		/bin/cp /labhome/cmi/.crash /root; \
-		test -f /bin/tmux || yum install -y screen tmux ctags kexec-tools; apt install -y cscope tmux screen exuberant-ctags bison; \
+		yum install -y screen tmux ctags kexec-tools; \
+		apt install -y cscope tmux screen exuberant-ctags bison; \
 		fi "
 done
 set +x
