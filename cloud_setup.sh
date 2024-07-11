@@ -56,6 +56,7 @@ for host in $host1 $host2; do
 		mv /root/.bashrc bashrc.orig; \
 		ln -s /labhome/cmi/.bashrc /root; \
 		ln -s /labhome/cmi/.tmux.conf /root; \
+		ln -s /labhome/cmi/.screenrc /root; \
 		ln -s /labhome/cmi/.vimrc /root; \
 		ln -s /labhome/cmi/.vim /root; \
 		/bin/cp /labhome/cmi/.crash /root; \
