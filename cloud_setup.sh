@@ -60,8 +60,8 @@ for host in $host1 $host2; do
 		ln -s /labhome/cmi/.vimrc /root; \
 		ln -s /labhome/cmi/.vim /root; \
 		/bin/cp /labhome/cmi/.crash /root; \
-		yum install -y cscope tmux screen ctags kexec-tools; \
-		apt install -y cscope tmux screen exuberant-ctags bison automake; \
+		yum install -y cscope tmux screen ctags kexec-tools rsync; \
+		apt install -y cscope tmux screen exuberant-ctags bison automake rsync; \
 		fi "
 done
 set +x
