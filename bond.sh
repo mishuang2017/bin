@@ -22,8 +22,9 @@ devlink dev eswitch set pci/0000:08:00.1 mode switchdev
 link=enp8s0f0
 link2=enp8s0f1
 
-ip link set dev $link link down
+ip link set dev $link down
 ip link set dev $link2 down
+read
 # ip link add name bond0 type bond mode active-backup miimon 100
 ip link add name bond0 type bond mode 802.3ad xmit_hash_policy layer3+4 miimon 100
 ip link set dev $link master bond0
