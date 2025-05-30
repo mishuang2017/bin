@@ -1,0 +1,46 @@
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_fs.c b/drivers/net/ethernet/mellanox/mlx5/core/en_fs.c
+index 2740e2c7f2..d3b771e867 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_fs.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_fs.c
+@@ -938,10 +938,19 @@ static int mlx5e_add_l2_flow_rule(struct mlx5e_priv *priv,
+ 	struct mlx5_flow_destination dest = {};
+ 	MLX5_DECLARE_FLOW_ACT(flow_act);
+ 	struct mlx5_flow_spec *spec;
++	bool brd = false;
+ 	int err = 0;
+ 	u8 *mc_dmac;
+ 	u8 *mv_dmac;
+ 
++	if (ai->addr[0] == 0xff &&
++	    ai->addr[1] == 0xff &&
++	    ai->addr[2] == 0xff &&
++	    ai->addr[3] == 0xff &&
++	    ai->addr[4] == 0xff &&
++	    ai->addr[5] == 0xff)
++		brd = true;
++
+ 	spec = kvzalloc(sizeof(*spec), GFP_KERNEL);
+ 	if (!spec)
+ 		return -ENOMEM;
+@@ -951,11 +960,19 @@ static int mlx5e_add_l2_flow_rule(struct mlx5e_priv *priv,
+ 	mv_dmac = MLX5_ADDR_OF(fte_match_param, spec->match_value,
+ 			       outer_headers.dmac_47_16);
+ 
+-	dest.type = MLX5_FLOW_DESTINATION_TYPE_FLOW_TABLE;
+-	dest.ft = mlx5_get_ttc_flow_table(priv->fs.ttc);
++	if (brd) {
++		dest.type = MLX5_FLOW_DESTINATION_TYPE_TIR;
++		dest.tir_num = 1;
++	} else {
++		dest.type = MLX5_FLOW_DESTINATION_TYPE_FLOW_TABLE;
++		dest.ft = mlx5_get_ttc_flow_table(priv->fs.ttc);
++	}
+ 
+ 	switch (type) {
+ 	case MLX5E_FULLMATCH:
++		pr_info("%s: MLX5E_FULLMATCH: %x:%x:%x:%x:%x:%x\n",
++			__func__, ai->addr[0],  ai->addr[1], ai->addr[2], ai->addr[3],
++			ai->addr[4], ai->addr[5]);
+ 		spec->match_criteria_enable = MLX5_MATCH_OUTER_HEADERS;
+ 		eth_broadcast_addr(mc_dmac);
+ 		ether_addr_copy(mv_dmac, ai->addr);
