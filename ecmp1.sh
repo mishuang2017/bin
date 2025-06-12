@@ -20,6 +20,9 @@ done
 ifconfig $nic1 $ip1/24 up
 ifconfig $nic2 $ip2/24 up
 
+ip r d 5.5.5.0/24
+ip r d 5.5.5.0/24 nhid 38
+
 ip nexthop del id 38
 ip nexthop del id 39
 ip nexthop del id 40
