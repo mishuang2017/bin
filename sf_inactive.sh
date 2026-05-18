@@ -5,4 +5,5 @@ for sf in $(/opt/mellanox/iproute2/sbin/mlxdevm port show | grep -i pcisf | grep
     # Print progress with the SF index and the specific PCI device ID
     echo "SF $i ($sf) -> Inactive"
     i=$((i+1))
+    sleep 1
 done
