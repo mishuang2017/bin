@@ -7,7 +7,7 @@ password=$2
 [[ -z $hosts ]] && exit
 [[ -z $password ]] && exit
 
-file=~cmi/mi/cloud_alias
+file=~cmi/cmi/mi/cloud_alias
 
 echo $hosts | grep "-"
 if [[ $? == 0 ]]; then
@@ -45,9 +45,20 @@ alias $num1='ssh root@$host1'
 EOF
 fi
 
+# askpass helper: ssh-copy-id's underlying ssh reads the password from this
+# program when it has no controlling tty (setsid) and askpass is forced.
+askpass=$(mktemp)
+chmod 700 "$askpass"
+cat > "$askpass" <<EOF
+#!/bin/bash
+echo '$password'
+EOF
+trap 'rm -f "$askpass"' EXIT
+
 set -x
 for host in $host1 $host2; do
-	sshpass -p $password ssh-copy-id  -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa.pub root@$host
+	SSH_ASKPASS="$askpass" SSH_ASKPASS_REQUIRE=force DISPLAY=:0 \
+		setsid -w ssh-copy-id -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa.pub root@$host
 
 	ssh root@$host "if [[ ! -d /images/cmi ]]; then
 		mkdir -p /images/cmi; \
