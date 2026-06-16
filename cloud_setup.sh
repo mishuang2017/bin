@@ -63,7 +63,7 @@ for host in $host1 $host2; do
 	ssh root@$host "if [[ ! -d /images/cmi ]]; then
 		mkdir -p /images/cmi; \
 		chown cmi.mtl /images/cmi; \
-		ln -s /labhome/cmi/mi /images/cmi; \
+		ln -s /labhome/cmi/cmi/mi /images/cmi; \
 		mv /root/.bashrc bashrc.orig; \
 		ln -s /labhome/cmi/.bashrc /root; \
 		ln -s /labhome/cmi/.tmux.conf /root; \
